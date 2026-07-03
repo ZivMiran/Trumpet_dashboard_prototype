@@ -59,7 +59,6 @@ export function Sidebar() {
   const curAcct = accountsPool.find((a) => a.id === acctId) || accountsPool[0];
   const nextToAdd = accountsPool.find((a) => !activeAccts.includes(a.id));
   const canAddAccount = !!nextToAdd;
-  const totalLive = fmtLive(activeAccts.reduce((sum, id) => sum + (liveCounts[id] || 0), 0));
 
   const goto = (p: Page) => update({ page: p });
   const toggleAcct = () => update((s) => ({ acctOpen: !s.acctOpen }));
