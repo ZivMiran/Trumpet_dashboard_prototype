@@ -14,12 +14,14 @@
 
 .kpi-card__top {
   display: flex;
-  align-items: flex-start;
-  gap: 6px;
+  align-items: center;
+  gap: 8px;
   min-width: 0;
 }
 
 .kpi-card__label {
+  flex: 1;
+  min-width: 0;
   font-size: 10.5px;
   letter-spacing: 0.06em;
   color: #8f9299;
@@ -27,17 +29,21 @@
   text-transform: uppercase;
 }
 
+/* Help affordance sits inline, right after the label, so the two read as a pair.
+   Not a positioning context — the tooltip anchors to the card so it lines up with
+   the title text, not with this icon's shifting position. */
 .kpi-card__tip-icon {
-  position: relative;
-  flex: none;
-  width: 16px;
-  height: 16px;
-  border: 1px solid #45494f;
-  border-radius: 50%;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px;
+  width: 15px;
+  height: 15px;
+  margin-left: 5px;
+  vertical-align: 1.5px;
+  border: 1px solid #45494f;
+  border-radius: 50%;
+  font-size: 9.5px;
+  line-height: 1;
   color: #8f9299;
   cursor: help;
   transition: border-color var(--dur-base) var(--ease-out),
@@ -49,16 +55,29 @@
   color: var(--accent);
 }
 
+/* Metric glyph pinned to the card's top-right corner. */
+.kpi-card__metric-icon {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6d7178;
+}
+
+/* Anchored to the card, not the icon: left edge lines up with the title text
+   (card padding-left) and it drops just below the label row. */
 .kpi-card__tip {
   position: absolute;
-  top: 150%;
-  left: 0;
+  top: 41px;
+  left: 17px;
   width: 200px;
   z-index: 30;
   background: #1d1f23;
   color: #bdbbb1;
   font-size: 11.5px;
   line-height: 1.45;
+  letter-spacing: normal;
+  text-transform: none;
   padding: 10px 12px;
   border-radius: 9px;
   border: 1px solid #45494f;

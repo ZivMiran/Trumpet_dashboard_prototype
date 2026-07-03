@@ -96,10 +96,14 @@ chart + revenue donut).
 - **Content:** Rotating insights — tag, pre/highlight/post headline, sub text, destination.
 
 ### KPI ribbon (Overview)
-- **Looks:** Row of stat cards. Each: label (with optional "?" help icon), big value, and a
-  delta row.
-- **States:** Help icon *hover* reveals a tooltip. (Cards themselves are static.)
-- **Content:** Per KPI — label, optional tip text, value, delta + "vs last month".
+- **Looks:** Row of stat cards. Each: a top row with the label (and its optional "?" help icon
+  inline, right after the label text) plus a muted metric glyph pinned to the top-right corner,
+  then a big value and a delta row.
+- **States:** Help icon *hover* reveals a tooltip (opens below, anchored to the icon's right so
+  it stays in view). (Cards themselves are static.)
+- **Content:** Per KPI — label, optional tip text, value, delta + "vs last month", and a
+  corner icon (Streams → waveform, Listeners → headphones, Saves → heart, Followers → people,
+  Save-to-Stream → percent).
 
 ### Streams chart
 - **Looks:** Large card. Header: a metric selector button + big value/delta, and a timeframe
