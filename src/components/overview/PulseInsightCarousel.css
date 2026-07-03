@@ -1,0 +1,121 @@
+.pulse-card {
+  flex: none;
+  position: relative;
+  border: 1px solid #30333a;
+  border-radius: 14px;
+  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: #2c2e31;
+}
+
+.pulse-card__icon {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(227, 181, 58, 0.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #e3b53a;
+  transition: background var(--dur-base) var(--ease-out);
+}
+
+.pulse-card:hover .pulse-card__icon {
+  background: rgba(227, 181, 58, 0.2);
+}
+
+.pulse-card__body {
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.pulse-card__tag {
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  color: #8f9299;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.pulse-card__headline {
+  font-size: 17px;
+  line-height: 1.4;
+  color: #f0ede5;
+}
+
+.pulse-card__hi {
+  color: #e3b53a;
+  font-weight: 500;
+}
+
+.pulse-card__sub {
+  font-size: 13px;
+  color: #8f9299;
+  margin-top: 5px;
+}
+
+.pulse-card__side {
+  flex: none;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.pulse-card__detail-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  white-space: nowrap;
+  border: 1px solid #45494f;
+  border-radius: 8px;
+  padding: 9px 15px;
+  color: #f0ede5;
+  background: #272a2f;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out);
+}
+
+.pulse-card__detail-btn:hover {
+  background: #33363b;
+  border-color: #54585f;
+}
+
+.pulse-card__detail-btn:active {
+  background: var(--surface-inset);
+}
+
+.pulse-card__detail-arrow {
+  display: inline-block;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.pulse-card__detail-btn:hover .pulse-card__detail-arrow {
+  transform: translateX(3px);
+}
+
+.pulse-card__dots {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.pulse-dot-btn {
+  height: 8px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: width 0.25s ease, background 0.25s ease;
+}
+
+.pulse-dot-btn:hover {
+  opacity: 0.7;
+}

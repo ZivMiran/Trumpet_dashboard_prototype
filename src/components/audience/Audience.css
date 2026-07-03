@@ -1,0 +1,33 @@
+.audience-page {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.audience-page__ribbon {
+  flex: none;
+  padding: 18px 26px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.audience-page__canvas {
+  flex: 1;
+  min-height: 0;
+  padding: 16px 26px 20px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+  gap: 16px;
+}
+
+.audience-page__side {
+  order: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 0;
+}

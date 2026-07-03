@@ -1,0 +1,72 @@
+.gender-split {
+  flex: none;
+  position: relative;
+  border-radius: 13px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #2c2e31;
+  padding: 15px 18px;
+  gap: 12px;
+}
+
+.gender-split__head {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+}
+
+.gender-split__title {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #f0ede5;
+}
+
+.gender-split__sub {
+  font-size: 11px;
+  color: #71757d;
+}
+
+.gender-split__delta {
+  margin-left: auto;
+  font-size: 11.5px;
+  color: #45c08a;
+}
+
+.gender-split__bar {
+  display: flex;
+  height: 12px;
+  border-radius: 6px;
+  overflow: hidden;
+  gap: 2px;
+  background: #16171a;
+}
+
+.gender-split__legend {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12.5px;
+}
+
+.gender-split__legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+}
+
+.gender-split__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+  flex: none;
+}
+
+.gender-split__label {
+  color: #d4d1c8;
+}
+
+.gender-split__pct {
+  color: #8f9299;
+}

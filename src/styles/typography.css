@@ -1,0 +1,52 @@
+/* Trumpet — Typography tokens
+   ---------------------------------------------------------------
+   One family: Space Grotesk. A geometric sans with a little character
+   and strong tabular figures. Casing is Title Case for headings &
+   labels, sentence case for body — NOT all-lowercase. Weights do the
+   hierarchy work; big figures (stream counts) are the hero element.
+   `--font-mono` is kept as an alias so existing references resolve to
+   Space Grotesk — Trumpet no longer uses a monospace face.
+*/
+
+:root {
+  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, -apple-system,
+               "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-mono: var(--font-sans); /* alias — Trumpet has no monospace */
+
+  /* Weights */
+  --fw-light:    300; /* @kind font */
+  --fw-regular:  400; /* @kind font */
+  --fw-medium:   500; /* @kind font */
+  --fw-semibold: 600; /* @kind font */
+  --fw-bold:     700; /* @kind font */
+
+  /* Type scale (px) — tuned for a data dashboard */
+  --fs-display:  64px; /* hero figure (big stat) */
+  --fs-stat:     40px; /* secondary stat */
+  --fs-h1:       32px; /* page title */
+  --fs-h2:       24px; /* section title */
+  --fs-h3:       18px; /* card title */
+  --fs-body:     15px; /* default body */
+  --fs-sm:       13px; /* secondary / table cells */
+  --fs-xs:       11px; /* labels, captions, eyebrows */
+
+  /* Line heights */
+  --lh-tight:   1.05; /* @kind other */
+  --lh-snug:    1.25; /* @kind other */
+  --lh-normal:  1.5; /* @kind other */
+
+  /* Letter spacing */
+  --ls-tight:   -0.02em; /* @kind spacing */
+  --ls-normal:  0; /* @kind spacing */
+  --ls-wide:    0.04em; /* @kind spacing */
+  --ls-caps:    0.12em; /* @kind spacing */
+
+  /* ---- Semantic text roles ---- */
+  --text-display: var(--fw-light) var(--fs-display)/var(--lh-tight) var(--font-mono);
+  --text-stat:    var(--fw-regular) var(--fs-stat)/var(--lh-tight) var(--font-mono);
+  --text-h1:      var(--fw-medium) var(--fs-h1)/var(--lh-snug) var(--font-mono);
+  --text-h2:      var(--fw-medium) var(--fs-h2)/var(--lh-snug) var(--font-mono);
+  --text-h3:      var(--fw-medium) var(--fs-h3)/var(--lh-snug) var(--font-mono);
+  --text-body:    var(--fw-regular) var(--fs-body)/var(--lh-normal) var(--font-mono);
+  --text-label:   var(--fw-regular) var(--fs-xs)/var(--lh-normal) var(--font-mono);
+}

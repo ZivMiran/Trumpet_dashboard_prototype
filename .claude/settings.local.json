@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__Claude_Preview__preview_start",
+      "Bash(python3 \"C:\\\\Users\\\\Ziv\\\\AppData\\\\Roaming\\\\Claude\\\\local-agent-mode-sessions\\\\skills-plugin\\\\cf36a69f-d396-4838-b30e-54df9d3f20a5\\\\97640227-2518-4785-abca-6ce48fb5f55d\\\\skills\\\\ui-ux-pro-max\\\\scripts\\\\search.py\" \"interactive indicators hover state affordance unclear\" --domain ux -n 8)",
+      "PowerShell(python \"C:\\\\Users\\\\Ziv\\\\AppData\\\\Roaming\\\\Claude\\\\local-agent-mode-sessions\\\\skills-plugin\\\\cf36a69f-d396-4838-b30e-54df9d3f20a5\\\\97640227-2518-4785-abca-6ce48fb5f55d\\\\skills\\\\ui-ux-pro-max\\\\scripts\\\\search.py\" \"interactive indicators hover state affordance unclear\" --domain ux -n 8)"
+    ]
+  }
+}

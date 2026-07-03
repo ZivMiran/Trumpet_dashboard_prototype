@@ -1,0 +1,41 @@
+/* Trumpet — Spacing, sizing & radius tokens
+   ---------------------------------------------------------------
+   Monkeytype is airy and generous. Trumpet keeps that breathing
+   room: an 8px base rhythm, soft-but-present radii, comfortable
+   control heights. Corners are gently rounded (never pill, never
+   sharp) — matching the rounded-rect buttons in the inspiration.
+*/
+
+:root {
+  /* Base 8 rhythm */
+  --space-0:  0;
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  24px;
+  --space-6:  32px;
+  --space-7:  48px;
+  --space-8:  64px;
+  --space-9:  96px;
+
+  /* Radii — soft rounded rectangles */
+  --radius-sm:   6px;  /* chips, small controls */
+  --radius-md:   8px;  /* buttons, inputs */
+  --radius-lg:   12px; /* cards, panels */
+  --radius-xl:   16px; /* large surfaces */
+  --radius-full: 999px;
+
+  /* Control heights */
+  --control-sm: 32px;
+  --control-md: 40px;
+  --control-lg: 48px;
+
+  /* Layout */
+  --container-max: 1280px;
+  --sidebar-w:     232px;
+  --gutter:        var(--space-5);
+
+  /* Hairline */
+  --border-width: 1px;
+}

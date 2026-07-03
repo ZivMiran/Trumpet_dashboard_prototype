@@ -1,0 +1,232 @@
+.modal-scrim {
+  position: absolute;
+  inset: 0;
+  background: var(--scrim);
+  backdrop-filter: var(--blur);
+  z-index: 55;
+}
+
+.notif-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 680px;
+  max-width: 92%;
+  height: 620px;
+  max-height: 86vh;
+  z-index: 56;
+  background: var(--sub-alt);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.notif-modal__header {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.notif-modal__title {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.notif-modal__count {
+  border: 1px solid var(--border-strong);
+  color: var(--text-dim);
+  border-radius: 20px;
+  padding: 1px 9px;
+  font-size: 11.5px;
+}
+
+.notif-modal__mark-all {
+  margin-left: auto;
+  cursor: pointer;
+  font-size: 12px;
+  color: #8f9299;
+  border-bottom: 1px solid var(--border-strong);
+  background: transparent;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  font-family: inherit;
+}
+
+.notif-modal__close {
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dim);
+  background: var(--surface-raised);
+}
+
+.notif-modal__close:hover {
+  background: #33363b;
+}
+
+.notif-modal__toolbar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 15px 22px;
+  border-bottom: 1px solid var(--border-subtle);
+  flex-wrap: wrap;
+}
+
+.notif-modal__search {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  padding: 9px 12px;
+  flex: 1;
+  min-width: 190px;
+  max-width: 280px;
+  background: var(--bg);
+}
+
+.notif-modal__search-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.notif-modal__filters {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.notif-filter-pill {
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  transition: background var(--dur-base) ease;
+  border: 1px solid var(--border-strong);
+  color: #8f9299;
+  background: transparent;
+  font-family: inherit;
+}
+
+.notif-filter-pill:hover {
+  background: var(--surface-raised);
+}
+
+.notif-filter-pill--active {
+  border-color: var(--accent-press);
+  background: rgba(227, 181, 58, 0.12);
+  color: var(--accent);
+}
+
+.notif-filter-pill--active:hover {
+  background: rgba(227, 181, 58, 0.12);
+}
+
+.notif-modal__list {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.notif-modal-row {
+  display: flex;
+  gap: 13px;
+  padding: 16px 22px;
+  border-bottom: 1px solid #26282d;
+}
+
+.notif-modal-row__icon {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  background: #3a3d42;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #71757d;
+}
+
+.notif-modal-row__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.notif-modal-row__top {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.notif-modal-row__title {
+  flex: 1;
+  min-width: 0;
+  font-size: 14.5px;
+  line-height: 1.3;
+  color: var(--text);
+}
+
+.notif-modal-row__time {
+  flex: none;
+  font-size: 11px;
+  color: #71757d;
+  white-space: nowrap;
+}
+
+.notif-modal-row__body-text {
+  font-size: 13px;
+  color: #8f9299;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+.notif-modal-row__kind {
+  margin-top: 9px;
+}
+
+.notif-modal-row__kind-pill {
+  font-size: 10.5px;
+  letter-spacing: 0.05em;
+  color: #8f9299;
+  border: 1px solid var(--border-strong);
+  border-radius: 20px;
+  padding: 2px 9px;
+}
+
+.notif-modal-row__dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-top: 6px;
+}
+
+.notif-modal__empty {
+  padding: 36px;
+  text-align: center;
+  font-size: 13px;
+  color: #8f9299;
+}

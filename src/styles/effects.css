@@ -1,0 +1,32 @@
+/* Trumpet — Effects: shadow, motion, focus
+   ---------------------------------------------------------------
+   The aesthetic is FLAT. Surfaces separate by color value, not by
+   heavy drop shadows. Shadows are deep and soft, used only for
+   true overlays (menus, dialogs, toasts). Motion is quick and
+   understated — ease-out fades and tiny lifts, never bouncy.
+   Interactive feedback: hover lightens the surface or the accent;
+   press deepens it. The accent gold itself never gets a shadow.
+*/
+
+:root {
+  /* Shadows — for overlays only */
+  --shadow-sm:  0 1px 2px rgba(0,0,0,0.25);
+  --shadow-md:  0 6px 20px rgba(0,0,0,0.35);
+  --shadow-lg:  0 16px 48px rgba(0,0,0,0.45);
+  --shadow-pop: 0 8px 28px rgba(0,0,0,0.5);
+
+  /* Focus ring (keyboard) */
+  --ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--main); /* @kind shadow */
+
+  /* Motion */
+  --ease-out:   cubic-bezier(0.22, 1, 0.36, 1); /* @kind other */
+  --ease-in-out:cubic-bezier(0.65, 0, 0.35, 1); /* @kind other */
+  --dur-fast:   0.10s; /* @kind other */
+  --dur-base:   0.15s; /* @kind other */
+  --dur-slow:   0.25s; /* @kind other */
+  --transition: var(--dur-base) var(--ease-out); /* @kind other */
+
+  /* Glass / overlay scrim */
+  --scrim: rgba(20,21,22,0.6); /* @kind other */
+  --blur:  blur(6px); /* @kind other */
+}

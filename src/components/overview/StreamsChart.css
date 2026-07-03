@@ -1,0 +1,411 @@
+.streams-card {
+  flex: 0 0 64%;
+  border-radius: 14px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: #2c2e31;
+}
+
+.streams-card__head {
+  flex: none;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.streams-card__metric-wrap {
+  position: relative;
+}
+
+.streams-card__metric-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid #45494f;
+  border-radius: 9px;
+  padding: 8px 14px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #f0ede5;
+  cursor: pointer;
+  background: #16171a;
+  font-family: inherit;
+  transition: background var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out);
+}
+
+.streams-card__metric-btn:hover {
+  background: #22242a;
+  border-color: #54585f;
+}
+
+.streams-card__metric-btn--open {
+  background: rgba(227, 181, 58, 0.1);
+  border-color: var(--accent-press);
+}
+
+.streams-card__metric-btn svg {
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.streams-card__metric-btn--open svg {
+  transform: rotate(180deg);
+}
+
+.streams-card__metric-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 44;
+}
+
+.streams-card__metric-menu {
+  position: absolute;
+  top: 34px;
+  left: 0;
+  z-index: 45;
+  min-width: 218px;
+  background: #1d1f23;
+  border: 1px solid #45494f;
+  border-radius: 12px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
+  padding: 6px;
+  transform-origin: top left;
+  animation: pop-in var(--dur-base) var(--ease-out);
+}
+
+.streams-card__metric-menu-label {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: #71757d;
+  text-transform: uppercase;
+  padding: 7px 11px 6px;
+}
+
+.streams-card__metric-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 8px 11px;
+  border-radius: 8px;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+
+.streams-card__metric-row:hover {
+  background: #272a2f;
+}
+
+.streams-card__metric-row--active {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.streams-card__metric-row-label {
+  flex: 1;
+  font-size: 13px;
+  color: #bdbbb1;
+}
+
+.streams-card__metric-row--active .streams-card__metric-row-label {
+  color: #f0ede5;
+}
+
+.streams-card__metric-dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.streams-card__metric-row-value {
+  font-size: 12px;
+  color: #8f9299;
+  font-variant-numeric: tabular-nums;
+}
+
+.streams-card__value-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.streams-card__value {
+  font-size: 40px;
+  font-weight: 300;
+  line-height: 1;
+  color: #f0ede5;
+  letter-spacing: -0.02em;
+}
+
+.streams-card__delta {
+  font-size: 14px;
+}
+
+.streams-card__tfseg {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  border: 1px solid #45494f;
+  border-radius: 9px;
+  padding: 3px;
+  background: #16171a;
+}
+
+.streams-card__tfseg-item {
+  position: relative;
+}
+
+.streams-card__tfseg-btn {
+  padding: 6px 13px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--dur-base) var(--ease-out),
+    color var(--dur-base) var(--ease-out);
+}
+
+.streams-card__tfseg-btn--active {
+  font-weight: 500;
+  background: #e3b53a;
+  color: #1f1804;
+}
+
+.streams-card__tfseg-btn--inactive {
+  color: #bdbbb1;
+  background: transparent;
+}
+
+.streams-card__tfseg-btn--inactive:hover {
+  color: #f0ede5;
+  background: var(--surface-raised);
+}
+
+.streams-card__tfseg-tooltip {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 9px);
+  transform: translateX(-50%);
+  white-space: nowrap;
+  background: #1d1f23;
+  border: 1px solid #45494f;
+  border-radius: 7px;
+  padding: 5px 10px;
+  font-size: 11px;
+  color: #f0ede5;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  z-index: 30;
+  animation: fade-soft var(--dur-fast) var(--ease-out);
+}
+
+.streams-card__body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  gap: 10px;
+}
+
+.streams-card__ylabels {
+  flex: none;
+  width: 46px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 1px 0 20px;
+  font-size: 10px;
+  color: #71757d;
+  font-variant-numeric: tabular-nums;
+}
+
+.streams-card__chart-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.streams-card__chart-area {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  cursor: crosshair;
+}
+
+.streams-card__avg-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 0;
+  border-top: 1px dashed rgba(227, 181, 58, 0.4);
+  z-index: 4;
+}
+
+.streams-card__avg-pill {
+  position: absolute;
+  right: 0;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 3px 10px 3px 8px;
+  background: rgba(29, 31, 35, 0.94);
+  border: 1px solid #3a3d42;
+  border-radius: 999px;
+  z-index: 5;
+}
+
+.streams-card__avg-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #e3b53a;
+}
+
+.streams-card__avg-label {
+  font-size: 9px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: #8f9299;
+  font-weight: 600;
+}
+
+.streams-card__avg-value {
+  font-size: 11.5px;
+  color: #e8e6df;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.streams-card__svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.streams-card__area-path {
+  animation: areaFade 0.6s ease;
+}
+
+.streams-card__xlabels {
+  flex: none;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 9px;
+  font-size: 10.5px;
+  color: #71757d;
+}
+
+.streams-card__tip-top {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  white-space: nowrap;
+}
+
+.streams-card__tip-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #f0ede5;
+  font-variant-numeric: tabular-nums;
+}
+
+.streams-card__tip-label {
+  font-size: 11px;
+  color: #8f9299;
+}
+
+/* ── Peak-event marker (sits on the data point) ──────────── */
+.streams-card__evt-mark {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 2px solid var(--surface-card);
+  background: var(--accent);
+  color: var(--on-main);
+  cursor: pointer;
+  pointer-events: auto;
+  z-index: 7;
+  box-shadow: 0 0 0 3px rgba(227, 181, 58, 0.18), 0 2px 6px rgba(0, 0, 0, 0.45);
+  transition: transform var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out),
+    background var(--dur-base) var(--ease-out);
+  animation: fade-soft var(--dur-slow) var(--ease-out);
+}
+
+.streams-card__evt-mark:hover,
+.streams-card__evt-mark:focus-visible {
+  background: var(--accent-hover);
+  box-shadow: 0 0 0 5px rgba(227, 181, 58, 0.3), 0 2px 8px rgba(0, 0, 0, 0.5);
+  transform: translate(-50%, -50%) scale(1.14);
+  outline: none;
+}
+
+/* ── Event detail folded into the single hover tooltip ───── */
+.streams-card__tip-evt {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #30333a;
+  max-width: 222px;
+}
+
+.streams-card__tip-evt-tag {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 4px;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.streams-card__tip-evt-bolt {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+}
+
+.streams-card__tip-evt-title {
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.streams-card__tip-evt-detail {
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+@keyframes drawA {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes drawB {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes areaFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

@@ -1,0 +1,91 @@
+.kpi-ribbon {
+  flex: none;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+}
+
+.kpi-card {
+  position: relative;
+  border-radius: 14px;
+  padding: 16px 17px;
+  background: #2c2e31;
+}
+
+.kpi-card__top {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 0;
+}
+
+.kpi-card__label {
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  color: #8f9299;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.kpi-card__tip-icon {
+  position: relative;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #45494f;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: #8f9299;
+  cursor: help;
+  transition: border-color var(--dur-base) var(--ease-out),
+    color var(--dur-base) var(--ease-out);
+}
+
+.kpi-card__tip-icon:hover {
+  border-color: var(--accent-press);
+  color: var(--accent);
+}
+
+.kpi-card__tip {
+  position: absolute;
+  top: 150%;
+  left: 0;
+  width: 200px;
+  z-index: 30;
+  background: #1d1f23;
+  color: #bdbbb1;
+  font-size: 11.5px;
+  line-height: 1.45;
+  padding: 10px 12px;
+  border-radius: 9px;
+  border: 1px solid #45494f;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
+  transform-origin: top left;
+  animation: pop-in var(--dur-base) var(--ease-out);
+}
+
+.kpi-card__value {
+  font-size: 28px;
+  font-weight: 300;
+  color: #f0ede5;
+  margin: 11px 0 6px;
+  letter-spacing: -0.01em;
+}
+
+.kpi-card__delta-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.kpi-card__delta {
+  color: #45c08a;
+}
+
+.kpi-card__delta-label {
+  color: #71757d;
+}

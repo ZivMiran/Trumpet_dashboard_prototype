@@ -1,0 +1,16 @@
+.overview-page {
+  flex: 1;
+  min-height: 0;
+  padding: 20px 28px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+}
+
+.overview-page__charts {
+  flex: 1;
+  min-height: 380px;
+  display: flex;
+  gap: 16px;
+}

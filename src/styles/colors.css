@@ -1,0 +1,58 @@
+/* Trumpet — Color tokens
+   ---------------------------------------------------------------
+   Gold-on-charcoal, on its own shades: a deep near-black charcoal
+   canvas and a rich brass-gold accent (warmer/deeper than a lemony
+   gold, no orange). One saturated hue — data viz leans on brass +
+   cool greys, not a rainbow. Greys are tuned for legible contrast
+   on the dark surfaces.
+*/
+
+:root {
+  /* ---- Base palette (raw values) ---- */
+  --bg:        #16171a; /* app canvas — deep charcoal */
+  --sub-alt:   #1d1f23; /* recessed/elevated surface (cards, wells) */
+  --sub-alt-2: #272a2f; /* hover surface, subtle raise */
+  --sub:       #8f9299; /* muted text & labels — raised for legibility */
+  --sub-soft:  #30333a; /* faint borders, gridlines */
+  --text:      #f0ede5; /* primary text — warm white */
+  --text-dim:  #bdbbb1; /* secondary text — raised for legibility */
+
+  --main:      #e3b53a; /* THE accent — brass gold */
+  --main-hover:#f2c860; /* lighter brass on hover */
+  --main-press:#c29620; /* deeper brass on press */
+  --on-main:   #1f1804; /* text/icon sitting on a brass fill */
+
+  --error:     #e5484d; /* errors, negative deltas */
+  --error-extra:#7a2228;/* error background tint */
+  --success:   #45c08a; /* positive deltas (used sparingly) */
+
+  /* ---- Data-viz ramp (brass-forward, restrained) ---- */
+  --viz-1: #e3b53a; /* primary series — brass gold */
+  --viz-2: #8a8d94; /* secondary series — grey */
+  --viz-3: #bd911f; /* tertiary — deep brass */
+  --viz-grid: #282b31; /* chart gridlines */
+
+  /* ---- Semantic aliases (use these in product UI) ---- */
+  --surface-app:     var(--bg);
+  --surface-card:    var(--sub-alt);
+  --surface-raised:  var(--sub-alt-2);
+  --surface-inset:   #111214;
+
+  --text-primary:    var(--text);
+  --text-secondary:  var(--text-dim);
+  --text-muted:      var(--sub);
+  --text-on-accent:  var(--on-main);
+
+  --accent:          var(--main);
+  --accent-hover:    var(--main-hover);
+  --accent-press:    var(--main-press);
+
+  --border-subtle:   var(--sub-soft);
+  --border-strong:   #45494f;
+
+  --focus-ring:      var(--main);
+  --caret:           var(--main);
+
+  --positive:        var(--success);
+  --negative:        var(--error);
+}
