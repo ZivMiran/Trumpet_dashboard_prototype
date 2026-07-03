@@ -131,10 +131,6 @@ export function Sidebar() {
             <div className="acct-popover">
               <div className="acct-popover__header">
                 <span className="acct-popover__label">Accounts</span>
-                <span className="acct-popover__live">
-                  <span className="pulse-dot" />
-                  {totalLive}
-                </span>
               </div>
               {activeAccts
                 .map((id) => accountsPool.find((a) => a.id === id))
