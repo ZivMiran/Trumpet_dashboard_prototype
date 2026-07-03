@@ -133,7 +133,7 @@ export function Sidebar() {
                 <span className="acct-popover__label">Accounts</span>
                 <span className="acct-popover__live">
                   <span className="pulse-dot" />
-                  {totalLive} live now
+                  {totalLive}
                 </span>
               </div>
               {activeAccts
