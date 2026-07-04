@@ -106,21 +106,27 @@ chart + revenue donut).
   Save-to-Stream → percent).
 
 ### Streams chart
-- **Looks:** Large card. Header: a metric selector button + big value/delta, and a timeframe
-  segmented control. Body: y-axis labels, an area+line chart with dashed gridlines, an
-  average line with an "Avg" pill, hover crosshair + dot + tooltip, and peak-event markers;
-  x-axis labels below. The line animates (draws in) on metric/timeframe change.
+- **Looks:** Large card. Controls row: a metric segmented control (Streams / Listeners /
+  Saves / Followers) on the left, a timeframe segmented control on the right — matching
+  instruments. Below: big value + delta + "vs prior …" comparison label. Body: a slim
+  left axis column whose labels are left-aligned flush with the card rail (controls,
+  value, and scale share one left line), then the area+line chart with dashed gridlines.
+  Average line with an "Avg" pill, hover crosshair + dot + tooltip, peak-event markers,
+  a pulsing "now" dot on the last point; x-axis labels below the plot. The line draws in
+  (fill fading with it) on metric/timeframe change.
 - **States:**
-  - Metric button *default* vs *open* (menu shown over a scrim; rows show dot, label, value,
-    check on the active metric).
-  - Timeframe segment items: *active* vs *inactive*; *hover* shows the full timeframe name as
-    a tooltip.
-  - Chart *hover*: crosshair + highlighted dot follow the cursor; tooltip shows value (and
-    peak-event detail when near an event marker); tooltip flips above/below to stay in view.
-  - Delta color: green up / red down / grey flat.
+  - Metric and timeframe segment items: *active* (gold pill) vs *inactive*; timeframe
+    *hover* shows the full timeframe name as a tooltip.
+  - Chart *hover*: crosshair + highlighted dot snap to the nearest data point; the tooltip
+    (anchored to that point, flipping above/below to stay in view) shows period, value,
+    and metric.
+  - Peak-event *magnet*: when the cursor nears an event's x position, the crosshair tugs
+    onto the event, the marker lights up (hover state), the plain dot hides, and the
+    tooltip gains the event title + detail.
+  - Delta color: green up / red down / grey flat ("lifetime" on All).
   - *Mobile:* fixed wide chart; not reflowed.
-- **Content:** Selectable metric (label, color, value), timeframe (1D/1W/1M/1Y/All),
-  series data, average, event markers (title + detail).
+- **Content:** Metric tabs (label per metric), timeframe (1D/1W/1M/1Y/All), per-point
+  series data with period labels, average, event markers (title + detail).
 
 ### Revenue donut
 - **Looks:** Card with title/subtitle and an SVG donut; center shows a label + value; a legend

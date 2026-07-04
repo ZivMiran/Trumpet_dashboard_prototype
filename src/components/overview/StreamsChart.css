@@ -8,153 +8,18 @@
   background: #2c2e31;
 }
 
+/* ── Controls row: metric tabs left, timeframe right ─────── */
 .streams-card__head {
   flex: none;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: space-between;
   gap: 14px;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 
-.streams-card__metric-wrap {
-  position: relative;
-}
-
-.streams-card__metric-btn {
+.streams-card__seg {
   display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  border: 1px solid #45494f;
-  border-radius: 9px;
-  padding: 8px 14px;
-  font-size: 15px;
-  font-weight: 500;
-  color: #f0ede5;
-  cursor: pointer;
-  background: #16171a;
-  font-family: inherit;
-  transition: background var(--dur-base) var(--ease-out),
-    border-color var(--dur-base) var(--ease-out);
-}
-
-.streams-card__metric-btn:hover {
-  background: #22242a;
-  border-color: #54585f;
-}
-
-.streams-card__metric-btn--open {
-  background: rgba(227, 181, 58, 0.1);
-  border-color: var(--accent-press);
-}
-
-.streams-card__metric-btn svg {
-  transition: transform var(--dur-base) var(--ease-out);
-}
-
-.streams-card__metric-btn--open svg {
-  transform: rotate(180deg);
-}
-
-.streams-card__metric-scrim {
-  position: fixed;
-  inset: 0;
-  z-index: 44;
-}
-
-.streams-card__metric-menu {
-  position: absolute;
-  /* The wrap also contains the value row, so anchor to the 37px button + 6px gap. */
-  top: 43px;
-  left: 0;
-  z-index: 45;
-  min-width: 218px;
-  background: #1d1f23;
-  border: 1px solid #45494f;
-  border-radius: 12px;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
-  padding: 6px;
-  transform-origin: top left;
-  animation: pop-in var(--dur-base) var(--ease-out);
-}
-
-.streams-card__metric-menu-label {
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  color: #71757d;
-  text-transform: uppercase;
-  padding: 7px 11px 6px;
-}
-
-.streams-card__metric-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  border: none;
-  background: transparent;
-  font-family: inherit;
-  text-align: left;
-  cursor: pointer;
-  padding: 8px 11px;
-  border-radius: 8px;
-  transition: background var(--dur-fast) var(--ease-out);
-}
-
-.streams-card__metric-row:hover {
-  background: #272a2f;
-}
-
-.streams-card__metric-row--active {
-  background: rgba(255, 255, 255, 0.04);
-}
-
-.streams-card__metric-row-label {
-  flex: 1;
-  font-size: 13px;
-  color: #bdbbb1;
-}
-
-.streams-card__metric-row--active .streams-card__metric-row-label {
-  color: #f0ede5;
-}
-
-.streams-card__metric-dot {
-  flex: none;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-}
-
-.streams-card__metric-row-value {
-  font-size: 12px;
-  color: #8f9299;
-  font-variant-numeric: tabular-nums;
-}
-
-.streams-card__value-row {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  margin-top: 12px;
-  animation: value-in var(--dur-slow) var(--ease-out);
-}
-
-.streams-card__value {
-  font-size: 40px;
-  font-weight: 300;
-  line-height: 1;
-  color: #f0ede5;
-  letter-spacing: -0.02em;
-  font-variant-numeric: tabular-nums;
-}
-
-.streams-card__delta {
-  font-size: 14px;
-}
-
-.streams-card__tfseg {
-  margin-left: auto;
-  display: flex;
   align-items: center;
   gap: 2px;
   border: 1px solid #45494f;
@@ -163,39 +28,45 @@
   background: #16171a;
 }
 
-.streams-card__tfseg-item {
+.streams-card__seg-item {
   position: relative;
 }
 
-.streams-card__tfseg-btn {
-  padding: 6px 13px;
+.streams-card__seg-btn {
+  padding: 6px 14px;
   border: none;
   border-radius: 6px;
   font-size: 12px;
   font-family: inherit;
+  text-align: center;
   cursor: pointer;
   white-space: nowrap;
   transition: background var(--dur-base) var(--ease-out),
     color var(--dur-base) var(--ease-out);
 }
 
-.streams-card__tfseg-btn--active {
+.streams-card__seg--tf .streams-card__seg-btn {
+  min-width: 42px;
+  padding: 6px 10px;
+}
+
+.streams-card__seg-btn--active {
   font-weight: 500;
   background: #e3b53a;
   color: #1f1804;
 }
 
-.streams-card__tfseg-btn--inactive {
+.streams-card__seg-btn--inactive {
   color: #bdbbb1;
   background: transparent;
 }
 
-.streams-card__tfseg-btn--inactive:hover {
+.streams-card__seg-btn--inactive:hover {
   color: #f0ede5;
   background: var(--surface-raised);
 }
 
-.streams-card__tfseg-tooltip {
+.streams-card__seg-tooltip {
   position: absolute;
   left: 50%;
   bottom: calc(100% + 9px);
@@ -213,26 +84,73 @@
   animation: fade-soft var(--dur-fast) var(--ease-out);
 }
 
+/* ── Hero stat ───────────────────────────────────────────── */
+.streams-card__value-row {
+  flex: none;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin: 0 0 20px;
+  animation: value-in var(--dur-slow) var(--ease-out);
+}
+
+.streams-card__value {
+  font-size: 40px;
+  font-weight: 300;
+  line-height: 1;
+  color: #f0ede5;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Delta + comparison anchor, mirroring the KPI cards' delta rows. */
+.streams-card__delta-row {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  font-size: 13px;
+}
+
+.streams-card__delta--up {
+  color: #45c08a;
+}
+
+.streams-card__delta--down {
+  color: #e5807f;
+}
+
+.streams-card__delta--flat {
+  color: #8f9299;
+}
+
+.streams-card__delta-vs {
+  font-size: 12px;
+  color: #71757d;
+}
+
+/* ── Plot ────────────────────────────────────────────────── */
 .streams-card__body {
   flex: 1;
   min-height: 0;
   display: flex;
-  gap: 10px;
+  gap: 12px;
 }
 
-/* The bottom padding must equal the x-labels strip height (9px margin + 16px line)
-   so this column spans exactly the plot area; the half-line negative margins on the
-   end labels make every label's center land precisely on its gridline. */
+/* Slim axis column. Labels are LEFT-aligned so they sit flush on the same
+   20px rail as the controls and the hero value; the plot gets the rest.
+   Bottom padding equals the x-labels strip (9px margin + 16px line) so the
+   column spans exactly the plot; the half-line negative margins land each
+   end label's center precisely on its gridline. */
 .streams-card__ylabels {
   flex: none;
-  width: 46px;
+  width: 44px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: flex-start;
   padding: 0 0 25px;
-  font-size: 10px;
-  line-height: 1.5;
+  font-size: 10.5px;
+  line-height: 15px;
   color: #71757d;
   font-variant-numeric: tabular-nums;
 }
@@ -257,6 +175,18 @@
   flex: 1;
   min-height: 0;
   cursor: crosshair;
+}
+
+.streams-card__grid-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 0;
+  border-top: 1px dashed rgba(255, 255, 255, 0.055);
+}
+
+.streams-card__grid-line--base {
+  border-top: 1px solid #3a3d42;
 }
 
 .streams-card__avg-line {
@@ -322,24 +252,14 @@
   stroke-linejoin: round;
   stroke-dasharray: 1;
   animation: chart-draw 0.85s var(--ease-out) forwards;
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--chart-color) 30%, transparent));
 }
 
 .streams-card__area-path {
   animation: area-in 0.85s var(--ease-out) both;
 }
 
-.streams-card__grid-line {
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 0;
-  border-top: 1px dashed rgba(255, 255, 255, 0.055);
-}
-
-.streams-card__grid-line--base {
-  border-top: 1px solid #3a3d42;
-}
-
+/* The eased left transition doubles as the magnetic tug toward peak events. */
 .streams-card__crosshair {
   position: absolute;
   top: 0;
@@ -348,7 +268,7 @@
   border-left: 1px dashed var(--chart-color);
   opacity: 0.4;
   transform: translateX(-0.5px);
-  transition: left 80ms linear;
+  transition: left 110ms var(--ease-out);
   pointer-events: none;
   z-index: 5;
 }
@@ -362,7 +282,7 @@
   border: 2px solid var(--chart-color);
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--chart-color) 14%, transparent);
   transform: translate(-50%, -50%);
-  transition: left 80ms linear, top 80ms linear;
+  transition: left 110ms var(--ease-out), top 110ms var(--ease-out);
   animation: fade-soft var(--dur-base) var(--ease-out);
   pointer-events: none;
   z-index: 6;
@@ -412,6 +332,7 @@
   padding: 8px 13px 9px;
   box-shadow: 0 16px 44px rgba(0, 0, 0, 0.55);
   animation: fade-soft var(--dur-base) var(--ease-out);
+  transition: left 110ms var(--ease-out), top 110ms var(--ease-out);
   pointer-events: none;
   z-index: 21;
 }
@@ -431,6 +352,15 @@
   align-items: baseline;
   gap: 7px;
   white-space: nowrap;
+}
+
+.streams-card__tip-dot {
+  flex: none;
+  align-self: center;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--chart-color);
 }
 
 .streams-card__tip-value {
@@ -469,7 +399,10 @@
   animation: fade-soft var(--dur-slow) var(--ease-out);
 }
 
+/* --hot mirrors :hover — set while the crosshair is magnetized onto the
+   event, so the marker lights up from anywhere on its x position. */
 .streams-card__evt-mark:hover,
+.streams-card__evt-mark--hot,
 .streams-card__evt-mark:focus-visible {
   background: var(--accent-hover);
   box-shadow: 0 0 0 5px rgba(227, 181, 58, 0.3), 0 2px 8px rgba(0, 0, 0, 0.5);

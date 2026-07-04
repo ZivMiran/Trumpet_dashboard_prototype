@@ -1,16 +1,23 @@
 import { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { metricMeta, metricSeries, tfShape, tfNames, evtData } from '../../data/overview';
+import { metricMeta, metricSeries, tfShape, tfNames, tfVs, evtData } from '../../data/overview';
 import { smoothPath, niceCeil, type Point } from '../../lib/chart';
 import { fmtAxis } from '../../lib/format';
 import type { Metric, Timeframe } from '../../types';
 import './StreamsChart.css';
 
 const tfKeys: Timeframe[] = ['1D', '1W', '1M', '1Y', 'All'];
+const metricKeys = Object.keys(metricMeta) as Metric[];
 
-// Snapped hover point plus the plot size captured at move time (for px math).
+// How close (as a fraction of plot width) the cursor must be to a peak-event
+// marker before the crosshair magnetizes onto it.
+const EVT_MAGNET = 0.04;
+
+// Snapped hover point, the magnetized event (if any), and the plot size
+// captured at move time (for px math).
 interface HoverState {
   idx: number;
+  evt: number | null;
   w: number;
   h: number;
 }
@@ -18,7 +25,6 @@ interface HoverState {
 export function StreamsChart() {
   const { state, update } = useApp();
   const [hover, setHover] = useState<HoverState | null>(null);
-  const [metricOpen, setMetricOpen] = useState(false);
   const [tfHover, setTfHover] = useState<Timeframe | null>(null);
   const [anim, setAnim] = useState(0);
 
@@ -28,23 +34,26 @@ export function StreamsChart() {
   const series = metricSeries[metric][tfKey];
   const metricValue = series[0];
   const metricDelta = series[1];
-  const metricDeltaColor = metricDelta.charAt(0) === '▲' ? '#45c08a' : metricDelta.charAt(0) === '▼' ? '#e5807f' : '#8f9299';
+  const deltaMod = metricDelta.charAt(0) === '▲' ? 'up' : metricDelta.charAt(0) === '▼' ? 'down' : 'flat';
   const metricColor = metricMeta[metric].color;
   const metricLabel = metricMeta[metric].label;
   const norm = shape.norm;
   const N = norm.length;
-  const xy: Point[] = norm.map((v, i) => ({ x: (i / (N - 1)) * 800, y: (1 - v) * 300 }));
+  // Axis max: the data peak plus ~8% headroom, rounded up to a nice number.
+  // The shape is then rescaled so each point is an honest fraction of that
+  // axis — the peak reads exactly series[2] and lands 75–92% up the plot,
+  // never leaving a dead band between the curve and the top gridline.
+  const peakNorm = Math.max(...norm);
+  const yTop = niceCeil(series[2] * 1.08);
+  const scale = series[2] / (peakNorm * yTop);
+  const sv = norm.map((v) => v * scale);
+  const xy: Point[] = sv.map((v, i) => ({ x: (i / (N - 1)) * 800, y: (1 - v) * 300 }));
   const metricLinePath = smoothPath(xy);
   const metricAreaPath = `${metricLinePath} L 800 300 L 0 300 Z`;
-  const peakNorm = Math.max(...norm);
-  const yTop = niceCeil(series[2] / peakNorm);
   const yLabels = [4, 3, 2, 1, 0].map((i) => fmtAxis((yTop * i) / 4));
-  const avgNorm = norm.reduce((a, b) => a + b, 0) / N;
-  const avgPct = ((1 - avgNorm) * 100).toFixed(2);
-  const avgLabel = fmtAxis(yTop * avgNorm);
-
-  const hi = hover ? Math.max(0, Math.min(N - 1, hover.idx)) : null;
-  const hiFrac = hi != null ? hi / (N - 1) : 0;
+  const avgFrac = sv.reduce((a, b) => a + b, 0) / N;
+  const avgPct = ((1 - avgFrac) * 100).toFixed(2);
+  const avgLabel = fmtAxis(yTop * avgFrac);
 
   const evts = evtData[tfKey] || [];
   const evtMarkers = evts.map((e, i) => {
@@ -52,25 +61,25 @@ export function StreamsChart() {
     const p = fx * (N - 1);
     const i0 = Math.floor(p);
     const i1 = Math.min(N - 1, i0 + 1);
-    const nv = norm[i0] + (norm[i1] - norm[i0]) * (p - i0);
-    return { key: i, fx, fxPct: fx * 100, cyPct: (1 - nv) * 100, t: e.t, d: e.d };
+    const nv = sv[i0] + (sv[i1] - sv[i0]) * (p - i0);
+    return { key: i, fx, fxPct: fx * 100, cyPct: (1 - nv) * 100, nv, t: e.t, d: e.d };
   });
 
-  // When the snapped point sits on a peak event the gold event marker is the
-  // indicator, so hide the plain follower dot and fold the event detail into
-  // the one hover tooltip — no second popup to collide with.
-  const nearEvt = hi != null ? evts.find((e) => Math.abs(e.x / 800 - hiFrac) < 0.05) || null : null;
-  const hoverValue = hi != null ? fmtAxis(yTop * norm[hi]) : '';
-  const hoverTime = hi != null ? shape.pts[hi] : '';
+  const hi = hover ? Math.max(0, Math.min(N - 1, hover.idx)) : null;
+  const hoverEvt = hover && hover.evt != null ? evtMarkers[hover.evt] : null;
+  // While magnetized, the event point is the hover anchor for the crosshair
+  // and tooltip; otherwise the nearest data point is.
+  const anchorFrac = hoverEvt ? hoverEvt.fx : hi != null ? hi / (N - 1) : 0;
+  const anchorTopPct = hoverEvt ? hoverEvt.cyPct : hi != null ? (1 - sv[hi]) * 100 : 0;
+  const hoverValue = hover ? fmtAxis(yTop * (hoverEvt ? hoverEvt.nv : sv[hi!])) : '';
+  const hoverTime = hover ? shape.pts[hoverEvt ? Math.round(hoverEvt.fx * (N - 1)) : hi!] : '';
 
-  // Tooltip is anchored to the snapped data point (same anchor as crosshair +
-  // dot), clamped to the plot, flipped below when the point rides too high.
   let tipStyle: React.CSSProperties | null = null;
-  if (hover && hi != null) {
-    const px = hiFrac * hover.w;
-    const py = (1 - norm[hi]) * hover.h;
-    const half = nearEvt ? 126 : 86;
-    const flip = py < (nearEvt ? 158 : 86);
+  if (hover) {
+    const px = anchorFrac * hover.w;
+    const py = (anchorTopPct / 100) * hover.h;
+    const half = hoverEvt ? 126 : 86;
+    const flip = py < (hoverEvt ? 158 : 86);
     tipStyle = {
       left: `${Math.max(half, Math.min(hover.w - half, px)).toFixed(0)}px`,
       top: `${(flip ? py + 18 : py - 18).toFixed(0)}px`,
@@ -80,20 +89,20 @@ export function StreamsChart() {
 
   const onChartMove = (ev: React.MouseEvent<HTMLDivElement>) => {
     const r = ev.currentTarget.getBoundingClientRect();
-    const idx = Math.max(0, Math.min(N - 1, Math.round(((ev.clientX - r.left) / r.width) * (N - 1))));
-    setHover((prev) => (prev && prev.idx === idx && prev.w === r.width && prev.h === r.height ? prev : { idx, w: r.width, h: r.height }));
+    const frac = (ev.clientX - r.left) / r.width;
+    const idx = Math.max(0, Math.min(N - 1, Math.round(frac * (N - 1))));
+    let evt: number | null = null;
+    for (let i = 0; i < evts.length; i++) {
+      if (Math.abs(evts[i].x / 800 - frac) < EVT_MAGNET) { evt = i; break; }
+    }
+    setHover((prev) =>
+      prev && prev.idx === idx && prev.evt === evt && prev.w === r.width && prev.h === r.height
+        ? prev
+        : { idx, evt, w: r.width, h: r.height },
+    );
   };
 
-  const metricOptions = (Object.keys(metricMeta) as Metric[]).map((k) => ({
-    key: k,
-    label: metricMeta[k].label,
-    color: metricMeta[k].color,
-    value: metricSeries[k][tfKey][0],
-    active: k === metric,
-  }));
-
   const selectMetric = (k: Metric) => {
-    setMetricOpen(false);
     if (k === metric) return;
     update({ metric: k });
     setAnim((a) => a + 1);
@@ -110,69 +119,46 @@ export function StreamsChart() {
   return (
     <div className="streams-card" style={{ '--chart-color': metricColor } as React.CSSProperties}>
       <div className="streams-card__head">
-        <div className="streams-card__metric-wrap">
-          <button
-            type="button"
-            className={`streams-card__metric-btn ${metricOpen ? 'streams-card__metric-btn--open' : ''}`}
-            aria-haspopup="menu"
-            aria-expanded={metricOpen}
-            onClick={() => setMetricOpen((o) => !o)}
-          >
-            <span>{metricLabel}</span>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#bdbbb1" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="m6 9 6 6 6-6" />
-            </svg>
-          </button>
-          {metricOpen && (
-            <>
-              <div className="streams-card__metric-scrim" onClick={() => setMetricOpen(false)} />
-              <div className="streams-card__metric-menu" role="menu">
-                <div className="streams-card__metric-menu-label">Metric</div>
-                {metricOptions.map((m) => (
-                  <button
-                    key={m.key}
-                    type="button"
-                    role="menuitem"
-                    className={`streams-card__metric-row ${m.active ? 'streams-card__metric-row--active' : ''}`}
-                    onClick={() => selectMetric(m.key)}
-                  >
-                    <span className="streams-card__metric-dot" style={{ background: m.color }} />
-                    <span className="streams-card__metric-row-label">{m.label}</span>
-                    <span className="streams-card__metric-row-value">{m.value}</span>
-                    {m.active && (
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={m.color} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M20 6 9 17l-5-5" />
-                      </svg>
-                    )}
-                  </button>
-                ))}
-              </div>
-            </>
-          )}
-          <div key={`${metric}-${tfKey}`} className="streams-card__value-row">
-            <div className="streams-card__value">{metricValue}</div>
-            <div className="streams-card__delta" style={{ color: metricDeltaColor }}>{metricDelta}</div>
-          </div>
+        <div className="streams-card__seg" aria-label="Metric">
+          {metricKeys.map((k) => (
+            <button
+              key={k}
+              type="button"
+              aria-pressed={k === metric}
+              className={`streams-card__seg-btn ${k === metric ? 'streams-card__seg-btn--active' : 'streams-card__seg-btn--inactive'}`}
+              onClick={() => selectMetric(k)}
+            >
+              {metricMeta[k].label}
+            </button>
+          ))}
         </div>
-        <div className="streams-card__tfseg">
+        <div className="streams-card__seg streams-card__seg--tf" aria-label="Timeframe">
           {tfKeys.map((k) => (
             <div
               key={k}
-              className="streams-card__tfseg-item"
+              className="streams-card__seg-item"
               onMouseEnter={() => setTfHover(k)}
               onMouseLeave={() => setTfHover((h) => (h === k ? null : h))}
             >
               <button
                 type="button"
                 aria-pressed={tfKey === k}
-                className={`streams-card__tfseg-btn ${tfKey === k ? 'streams-card__tfseg-btn--active' : 'streams-card__tfseg-btn--inactive'}`}
+                className={`streams-card__seg-btn ${tfKey === k ? 'streams-card__seg-btn--active' : 'streams-card__seg-btn--inactive'}`}
                 onClick={() => selectTf(k)}
               >
                 {k}
               </button>
-              {tfHover === k && <div className="streams-card__tfseg-tooltip">{tfNames[k]}</div>}
+              {tfHover === k && <div className="streams-card__seg-tooltip">{tfNames[k]}</div>}
             </div>
           ))}
+        </div>
+      </div>
+
+      <div key={`${metric}-${tfKey}`} className="streams-card__value-row">
+        <div className="streams-card__value">{metricValue}</div>
+        <div className="streams-card__delta-row">
+          <span className={`streams-card__delta streams-card__delta--${deltaMod}`}>{metricDelta}</span>
+          {tfVs[tfKey] && <span className="streams-card__delta-vs">{tfVs[tfKey]}</span>}
         </div>
       </div>
 
@@ -212,25 +198,25 @@ export function StreamsChart() {
                 <path d={metricLinePath} pathLength={1} vectorEffect="non-scaling-stroke" className="streams-card__line-path" />
               </g>
             </svg>
-            {hover && <div className="streams-card__crosshair" style={{ left: `${(hiFrac * 100).toFixed(3)}%` }} />}
-            {hover && hi != null && !nearEvt && (
+            {hover && <div className="streams-card__crosshair" style={{ left: `${(anchorFrac * 100).toFixed(3)}%` }} />}
+            {hover && hi != null && !hoverEvt && (
               <div
                 className="streams-card__hover-dot"
-                style={{ left: `${(hiFrac * 100).toFixed(3)}%`, top: `${((1 - norm[hi]) * 100).toFixed(3)}%` }}
+                style={{ left: `${(anchorFrac * 100).toFixed(3)}%`, top: `${anchorTopPct.toFixed(3)}%` }}
               />
             )}
             {!(hover && hi === N - 1) && (
               <div
                 key={`end-${anim}`}
                 className="streams-card__end-dot"
-                style={{ left: '100%', top: `${((1 - norm[N - 1]) * 100).toFixed(2)}%` }}
+                style={{ left: '100%', top: `${((1 - sv[N - 1]) * 100).toFixed(2)}%` }}
               />
             )}
             {evtMarkers.map((e) => (
               <button
                 key={e.key}
                 type="button"
-                className="streams-card__evt-mark"
+                className={`streams-card__evt-mark ${hover && hover.evt === e.key ? 'streams-card__evt-mark--hot' : ''}`}
                 style={{ left: `${e.fxPct.toFixed(2)}%`, top: `${e.cyPct.toFixed(2)}%` }}
                 aria-label={`Peak event: ${e.t}. ${e.d}`}
               >
@@ -243,10 +229,11 @@ export function StreamsChart() {
               <div className="streams-card__tip" style={tipStyle}>
                 <div className="streams-card__tip-time">{hoverTime}</div>
                 <div className="streams-card__tip-top">
+                  <span className="streams-card__tip-dot" />
                   <span className="streams-card__tip-value">{hoverValue}</span>
                   <span className="streams-card__tip-label">{metricLabel}</span>
                 </div>
-                {nearEvt && (
+                {hoverEvt && (
                   <div className="streams-card__tip-evt">
                     <div className="streams-card__tip-evt-tag">
                       <span className="streams-card__tip-evt-bolt">
@@ -256,8 +243,8 @@ export function StreamsChart() {
                       </span>
                       Peak event
                     </div>
-                    <div className="streams-card__tip-evt-title">{nearEvt.t}</div>
-                    <div className="streams-card__tip-evt-detail">{nearEvt.d}</div>
+                    <div className="streams-card__tip-evt-title">{hoverEvt.t}</div>
+                    <div className="streams-card__tip-evt-detail">{hoverEvt.d}</div>
                   </div>
                 )}
               </div>

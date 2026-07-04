@@ -46,6 +46,16 @@ export const tfNames: Record<Timeframe, string> = {
   All: 'All time',
 };
 
+// What the delta is measured against, shown next to it ("All" deltas read
+// "lifetime" on their own, so no comparison label there).
+export const tfVs: Record<Timeframe, string> = {
+  '1D': 'vs yesterday',
+  '1W': 'vs prior week',
+  '1M': 'vs prior month',
+  '1Y': 'vs prior year',
+  All: '',
+};
+
 export interface MetricMeta {
   label: string;
   color: string;
@@ -101,7 +111,7 @@ export interface ChartEvent {
 // x values sit exactly on the data point where each shape's bump begins)
 export const evtData: Partial<Record<Timeframe, ChartEvent[]>> = {
   '1W': [{ x: 533, y: 120, t: 'New Music Friday refresh', d: '"Neon Tides" re-added to the editorial list — Fri.' }],
-  '1M': [{ x: 538, y: 130, t: 'TikTok clip went viral', d: '24% spike in Spotify saves on "After Dark".' }],
+  '1M': [{ x: 524, y: 130, t: 'TikTok clip went viral', d: '24% spike in Spotify saves on "After Dark".' }],
   '1Y': [
     { x: 509, y: 140, t: 'Nightfall LP released', d: 'Album launch drove a catalog-wide lift.' },
     { x: 727, y: 90, t: 'Sync placement', d: '"Glass Hearts" featured in a Netflix trailer.' },
