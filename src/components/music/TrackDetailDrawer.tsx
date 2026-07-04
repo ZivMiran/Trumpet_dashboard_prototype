@@ -62,13 +62,13 @@ export function TrackDetailDrawer() {
       <aside className="track-drawer">
         <div className="track-drawer__head">
           <span className="track-drawer__head-label">Track Detail</span>
-          <div className="track-drawer__close" onClick={close}>
+          <button type="button" className="track-drawer__close" onClick={close}>
             Close
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M18 6 6 18" />
               <path d="m6 6 12 12" />
             </svg>
-          </div>
+          </button>
         </div>
 
         <div className="track-drawer__body">

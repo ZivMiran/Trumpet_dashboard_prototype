@@ -342,6 +342,7 @@
   background: var(--surface-inset);
   border-bottom: 1px solid #1d2024;
   font-size: 13px;
+  animation: fade-in var(--dur-base) var(--ease-out);
 }
 
 .catalog-table__row--sub:hover {

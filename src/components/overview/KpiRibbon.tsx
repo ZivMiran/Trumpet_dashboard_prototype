@@ -58,7 +58,10 @@ export function KpiRibbon() {
                   onMouseEnter={() => update({ tipKpi: i })}
                   onMouseLeave={() => update((s) => (s.tipKpi === i ? { tipKpi: null } : null))}
                 >
-                  ?
+                  {/* The real Space Grotesk "?" — kept on-brand. text-box trims its box
+                      to the glyph ink (cap height → baseline), so flex centers it as pure
+                      geometry; font metrics can't drift it. */}
+                  <span className="kpi-card__tip-glyph" aria-hidden="true">?</span>
                   {state.tipKpi === i && <div className="kpi-card__tip">{k.tip}</div>}
                 </span>
               )}

@@ -6,7 +6,7 @@
 
 .notif-dropdown {
   position: absolute;
-  top: 66px;
+  top: 70px; /* bell bottoms out at 62.5px — keep a clear 7px gap like other popovers */
   right: 28px;
   width: 366px;
   max-height: 74vh;

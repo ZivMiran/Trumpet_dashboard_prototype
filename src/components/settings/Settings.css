@@ -90,7 +90,7 @@
 }
 
 .settings-card__save-btn:hover {
-  background: #f0c93a;
+  background: var(--accent-hover);
 }
 
 .settings-card__save-btn:active {

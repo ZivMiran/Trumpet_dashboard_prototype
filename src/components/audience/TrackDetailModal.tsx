@@ -30,12 +30,12 @@ export function TrackDetailModal() {
             <div className="track-modal__title">{td.label}</div>
             <div className="track-modal__sub">{scopeLabel}</div>
           </div>
-          <div className="track-modal__close" onClick={close}>
+          <button type="button" className="track-modal__close" onClick={close}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M18 6 6 18"></path>
               <path d="m6 6 12 12"></path>
             </svg>
-          </div>
+          </button>
         </div>
 
         <div className="track-modal__body">

@@ -360,6 +360,7 @@
 .track-drawer__report-btn {
   flex: 1;
   text-align: center;
+  border: none;
   border-radius: 8px;
   padding: 12px;
   font-size: 14px;

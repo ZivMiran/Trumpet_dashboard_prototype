@@ -112,7 +112,11 @@ export function StreamsChart() {
   }));
 
   const selectMetric = (k: Metric) =>
-    update((s) => ({ metric: k, metricOpen: false, chartAnim: (s.chartAnim || 0) + 1, hoverIdx: null }));
+    update((s) =>
+      s.metric === k
+        ? { metricOpen: false }
+        : { metric: k, metricOpen: false, chartAnim: (s.chartAnim || 0) + 1, hoverIdx: null },
+    );
 
   const tfSeg = tfKeys.map((k) => ({
     key: k,
@@ -123,7 +127,8 @@ export function StreamsChart() {
     hovered: state.tfHover === k,
   }));
 
-  const selectTf = (k: Timeframe) => update((s) => ({ tf: k, chartAnim: (s.chartAnim || 0) + 1, hoverIdx: null }));
+  const selectTf = (k: Timeframe) =>
+    update((s) => (s.tf === k ? null : { tf: k, chartAnim: (s.chartAnim || 0) + 1, hoverIdx: null }));
 
   const evts = evtData[tfKey] || [];
   const evtMarkers = evts.map((e, i) => {
@@ -210,16 +215,13 @@ export function StreamsChart() {
               onMouseEnter={() => update({ tfHover: t.key })}
               onMouseLeave={() => update((s) => (s.tfHover === t.key ? { tfHover: null } : null))}
             >
-              {t.active && (
-                <div className="streams-card__tfseg-btn streams-card__tfseg-btn--active" onClick={() => selectTf(t.key)}>
-                  {t.label}
-                </div>
-              )}
-              {t.inactive && (
-                <div className="streams-card__tfseg-btn streams-card__tfseg-btn--inactive" onClick={() => selectTf(t.key)}>
-                  {t.label}
-                </div>
-              )}
+              <button
+                type="button"
+                className={`streams-card__tfseg-btn ${t.active ? 'streams-card__tfseg-btn--active' : 'streams-card__tfseg-btn--inactive'}`}
+                onClick={() => selectTf(t.key)}
+              >
+                {t.label}
+              </button>
               {t.hovered && <div className="streams-card__tfseg-tooltip">{t.full}</div>}
             </div>
           ))}

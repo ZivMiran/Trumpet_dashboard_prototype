@@ -61,12 +61,15 @@
   cursor: pointer;
   width: 30px;
   height: 30px;
+  padding: 0;
   border: 1px solid #45494f;
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #8f9299;
+  background: transparent;
+  font-family: inherit;
   transition: background 0.15s ease, color 0.15s ease;
 }
 

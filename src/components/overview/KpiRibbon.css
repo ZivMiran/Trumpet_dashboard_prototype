@@ -19,9 +19,14 @@
   min-width: 0;
 }
 
+/* Flex row so the help circle centers on the label text geometrically —
+   no vertical-align/baseline tuning that drifts with font metrics. */
 .kpi-card__label {
   flex: 1;
   min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
   font-size: 10.5px;
   letter-spacing: 0.06em;
   color: #8f9299;
@@ -29,25 +34,33 @@
   text-transform: uppercase;
 }
 
-/* Help affordance sits inline, right after the label, so the two read as a pair.
-   Not a positioning context — the tooltip anchors to the card so it lines up with
+/* Not a positioning context — the tooltip anchors to the card so it lines up with
    the title text, not with this icon's shifting position. */
 .kpi-card__tip-icon {
+  flex: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 15px;
   height: 15px;
-  margin-left: 5px;
-  vertical-align: 1.5px;
   border: 1px solid #45494f;
   border-radius: 50%;
-  font-size: 9.5px;
-  line-height: 1;
   color: #8f9299;
   cursor: help;
   transition: border-color var(--dur-base) var(--ease-out),
     color var(--dur-base) var(--ease-out);
+}
+
+/* trim-both collapses the line box to the glyph's ink (cap → baseline), so the
+   flex centering above places the "?" itself, not its font-metric box. Browsers
+   without text-box support fall back to line-box centering — within ~1px. */
+.kpi-card__tip-glyph {
+  display: block;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: normal;
+  text-box: trim-both cap alphabetic;
 }
 
 .kpi-card__tip-icon:hover {

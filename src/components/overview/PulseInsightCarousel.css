@@ -31,6 +31,8 @@
   flex: 1;
   min-width: 0;
   cursor: pointer;
+  /* Remounted per insight (keyed) so each rotation settles in instead of snapping. */
+  animation: fade-in var(--dur-slow) var(--ease-out);
 }
 
 .pulse-card__tag {
@@ -110,10 +112,18 @@
 }
 
 .pulse-dot-btn {
+  position: relative;
   height: 8px;
   border-radius: 5px;
   cursor: pointer;
   transition: width 0.25s ease, background 0.25s ease;
+}
+
+/* Invisible halo so the 8px dots have a comfortable click target. */
+.pulse-dot-btn::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
 }
 
 .pulse-dot-btn:hover {

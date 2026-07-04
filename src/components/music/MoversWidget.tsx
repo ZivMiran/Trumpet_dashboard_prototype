@@ -24,7 +24,7 @@ export function MoversWidget() {
     streams: fmtStreams(catalog[i]._s * tfDef.f),
     spark: tfDef.spark,
     coll: !!catalog[i].coll,
-    selected: i === state.sel && !catalog[i].coll,
+    selected: catalog[i].coll ? i === state.albumSel : i === state.sel,
   }));
 
   // Singles open the track drawer; collections open the album breakdown.

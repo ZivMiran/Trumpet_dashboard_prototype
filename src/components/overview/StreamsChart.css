@@ -63,7 +63,8 @@
 
 .streams-card__metric-menu {
   position: absolute;
-  top: 34px;
+  /* The wrap also contains the value row, so anchor to the 37px button + 6px gap. */
+  top: 43px;
   left: 0;
   z-index: 45;
   min-width: 218px;
@@ -161,8 +162,10 @@
 
 .streams-card__tfseg-btn {
   padding: 6px 13px;
+  border: none;
   border-radius: 6px;
   font-size: 12px;
+  font-family: inherit;
   cursor: pointer;
   white-space: nowrap;
   transition: background var(--dur-base) var(--ease-out),
@@ -210,6 +213,9 @@
   gap: 10px;
 }
 
+/* The bottom padding must equal the x-labels strip height (9px margin + 16px line)
+   so this column spans exactly the plot area; the half-line negative margins on the
+   end labels make every label's center land precisely on its gridline. */
 .streams-card__ylabels {
   flex: none;
   width: 46px;
@@ -217,10 +223,19 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: flex-end;
-  padding: 1px 0 20px;
+  padding: 0 0 25px;
   font-size: 10px;
+  line-height: 1.5;
   color: #71757d;
   font-variant-numeric: tabular-nums;
+}
+
+.streams-card__ylabels span:first-child {
+  margin-top: -7.5px;
+}
+
+.streams-card__ylabels span:last-child {
+  margin-bottom: -7.5px;
 }
 
 .streams-card__chart-col {
@@ -299,7 +314,9 @@
   display: flex;
   justify-content: space-between;
   margin-top: 9px;
+  height: 16px;
   font-size: 10.5px;
+  line-height: 16px;
   color: #71757d;
 }
 
