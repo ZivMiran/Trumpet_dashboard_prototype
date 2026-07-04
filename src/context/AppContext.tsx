@@ -35,15 +35,7 @@ export interface CityDetailSel {
 export interface AppState {
   page: Page;
   tf: Timeframe;
-  tfHover: Timeframe | null;
   metric: Metric;
-  metricOpen: boolean;
-  hoverIdx: number | null;
-  chartAnim: number;
-  hoverX: number | null;
-  hoverY: number | null;
-  hoverW: number;
-  hoverH: number;
   sel: number | null;
   selTrack: DrillTrack | null;
   albumSel: number | null;
@@ -80,15 +72,7 @@ export interface AppState {
 const initialState: AppState = {
   page: 'overview',
   tf: '1M',
-  tfHover: null,
   metric: 'streams',
-  metricOpen: false,
-  hoverIdx: null,
-  chartAnim: 0,
-  hoverX: null,
-  hoverY: null,
-  hoverW: 0,
-  hoverH: 0,
   sel: null,
   selTrack: null,
   albumSel: null,

@@ -7,12 +7,35 @@ export const pageMeta: Record<string, [string, string]> = {
   settings: ['Settings', 'Workspace & account preferences'],
 };
 
-export const tfShape: Record<Timeframe, { norm: number[]; x: string[] }> = {
-  '1D': { norm: [0.2, 0.16, 0.24, 0.3, 0.46, 0.4, 0.58, 0.66, 0.6, 0.72], x: ['12a', '6a', '12p', '6p', '11p'] },
-  '1W': { norm: [0.3, 0.42, 0.36, 0.52, 0.46, 0.62, 0.56, 0.68], x: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] },
-  '1M': { norm: [0.26, 0.34, 0.31, 0.48, 0.41, 0.58, 0.53, 0.63, 0.72], x: ['Wk 1', 'Wk 2', 'Wk 3', 'Wk 4'] },
-  '1Y': { norm: [0.18, 0.25, 0.34, 0.41, 0.53, 0.61, 0.71, 0.8], x: ['Q3', 'Q4', 'Q1', 'Q2'] },
-  All: { norm: [0.14, 0.21, 0.28, 0.43, 0.5, 0.66, 0.74, 0.82], x: ['2021', '2022', '2023', '2024'] },
+// Each timeframe: one norm value + period label per data point (pts), plus the
+// sparse axis labels (x). Shapes are hand-tuned so the bumps land on the peak
+// events annotated in evtData below.
+export const tfShape: Record<Timeframe, { norm: number[]; pts: string[]; x: string[] }> = {
+  '1D': {
+    norm: [0.3, 0.26, 0.22, 0.19, 0.17, 0.16, 0.19, 0.26, 0.34, 0.4, 0.44, 0.47, 0.48, 0.46, 0.45, 0.47, 0.52, 0.58, 0.65, 0.71, 0.76, 0.78, 0.7, 0.6],
+    pts: ['12 AM', '1 AM', '2 AM', '3 AM', '4 AM', '5 AM', '6 AM', '7 AM', '8 AM', '9 AM', '10 AM', '11 AM', '12 PM', '1 PM', '2 PM', '3 PM', '4 PM', '5 PM', '6 PM', '7 PM', '8 PM', '9 PM', '10 PM', '11 PM'],
+    x: ['12 AM', '6 AM', '12 PM', '6 PM', '11 PM'],
+  },
+  '1W': {
+    norm: [0.3, 0.42, 0.37, 0.48, 0.62, 0.68, 0.6],
+    pts: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    x: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+  },
+  '1M': {
+    norm: [0.26, 0.28, 0.27, 0.3, 0.32, 0.31, 0.34, 0.33, 0.36, 0.38, 0.37, 0.4, 0.42, 0.41, 0.44, 0.43, 0.46, 0.45, 0.48, 0.56, 0.62, 0.6, 0.58, 0.59, 0.61, 0.63, 0.65, 0.67, 0.69, 0.72],
+    pts: ['Jun 5', 'Jun 6', 'Jun 7', 'Jun 8', 'Jun 9', 'Jun 10', 'Jun 11', 'Jun 12', 'Jun 13', 'Jun 14', 'Jun 15', 'Jun 16', 'Jun 17', 'Jun 18', 'Jun 19', 'Jun 20', 'Jun 21', 'Jun 22', 'Jun 23', 'Jun 24', 'Jun 25', 'Jun 26', 'Jun 27', 'Jun 28', 'Jun 29', 'Jun 30', 'Jul 1', 'Jul 2', 'Jul 3', 'Jul 4'],
+    x: ['Jun 5', 'Jun 12', 'Jun 19', 'Jun 26', 'Jul 4'],
+  },
+  '1Y': {
+    norm: [0.18, 0.22, 0.25, 0.28, 0.33, 0.36, 0.4, 0.52, 0.57, 0.6, 0.72, 0.8],
+    pts: ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    x: ['Jul', 'Oct', 'Jan', 'Apr', 'Jun'],
+  },
+  All: {
+    norm: [0.12, 0.13, 0.14, 0.16, 0.17, 0.19, 0.21, 0.23, 0.25, 0.27, 0.33, 0.36, 0.39, 0.42, 0.45, 0.48, 0.52, 0.62, 0.68, 0.74, 0.8, 0.85],
+    pts: ['Q1 2021', 'Q2 2021', 'Q3 2021', 'Q4 2021', 'Q1 2022', 'Q2 2022', 'Q3 2022', 'Q4 2022', 'Q1 2023', 'Q2 2023', 'Q3 2023', 'Q4 2023', 'Q1 2024', 'Q2 2024', 'Q3 2024', 'Q4 2024', 'Q1 2025', 'Q2 2025', 'Q3 2025', 'Q4 2025', 'Q1 2026', 'Q2 2026'],
+    x: ['2021', '2022', '2023', '2024', '2025', '2026'],
+  },
 };
 
 export const tfNames: Record<Timeframe, string> = {
@@ -74,17 +97,18 @@ export interface ChartEvent {
   d: string;
 }
 
-// chart event annotations — dots on big moves (coords match the 800×300 viewBox)
+// chart event annotations — dots on big moves (coords match the 800×300 viewBox;
+// x values sit exactly on the data point where each shape's bump begins)
 export const evtData: Partial<Record<Timeframe, ChartEvent[]>> = {
-  '1W': [{ x: 550, y: 120, t: 'New Music Friday refresh', d: '"Neon Tides" re-added to the editorial list — Fri.' }],
-  '1M': [{ x: 520, y: 130, t: 'TikTok clip went viral', d: '24% spike in Spotify saves on "After Dark".' }],
+  '1W': [{ x: 533, y: 120, t: 'New Music Friday refresh', d: '"Neon Tides" re-added to the editorial list — Fri.' }],
+  '1M': [{ x: 538, y: 130, t: 'TikTok clip went viral', d: '24% spike in Spotify saves on "After Dark".' }],
   '1Y': [
-    { x: 520, y: 140, t: 'Nightfall LP released', d: 'Album launch drove a catalog-wide lift.' },
-    { x: 740, y: 90, t: 'Sync placement', d: '"Glass Hearts" featured in a Netflix trailer.' },
+    { x: 509, y: 140, t: 'Nightfall LP released', d: 'Album launch drove a catalog-wide lift.' },
+    { x: 727, y: 90, t: 'Sync placement', d: '"Glass Hearts" featured in a Netflix trailer.' },
   ],
   All: [
-    { x: 390, y: 170, t: 'First editorial add', d: '"Echo Theory — EP" picked up by Discover Weekly.' },
-    { x: 650, y: 100, t: 'Breakout year', d: 'TikTok virality compounded catalog growth.' },
+    { x: 381, y: 170, t: 'First editorial add', d: '"Echo Theory — EP" picked up by Discover Weekly.' },
+    { x: 648, y: 100, t: 'Breakout year', d: 'TikTok virality compounded catalog growth.' },
   ],
 };
 

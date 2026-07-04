@@ -89,6 +89,11 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  text-align: left;
   cursor: pointer;
   padding: 8px 11px;
   border-radius: 8px;
@@ -131,6 +136,7 @@
   align-items: baseline;
   gap: 12px;
   margin-top: 12px;
+  animation: value-in var(--dur-slow) var(--ease-out);
 }
 
 .streams-card__value {
@@ -139,6 +145,7 @@
   line-height: 1;
   color: #f0ede5;
   letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
 }
 
 .streams-card__delta {
@@ -305,8 +312,84 @@
   overflow: visible;
 }
 
+/* Line and fill reveal together: the line draws in while the fill fades up
+   underneath it on the same clock (the <g> is keyed to restart both). */
+.streams-card__line-path {
+  fill: none;
+  stroke: var(--chart-color);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  animation: chart-draw 0.85s var(--ease-out) forwards;
+}
+
 .streams-card__area-path {
-  animation: areaFade 0.6s ease;
+  animation: area-in 0.85s var(--ease-out) both;
+}
+
+.streams-card__grid-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 0;
+  border-top: 1px dashed rgba(255, 255, 255, 0.055);
+}
+
+.streams-card__grid-line--base {
+  border-top: 1px solid #3a3d42;
+}
+
+.streams-card__crosshair {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  border-left: 1px dashed var(--chart-color);
+  opacity: 0.4;
+  transform: translateX(-0.5px);
+  transition: left 80ms linear;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.streams-card__hover-dot {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #16171a;
+  border: 2px solid var(--chart-color);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--chart-color) 14%, transparent);
+  transform: translate(-50%, -50%);
+  transition: left 80ms linear, top 80ms linear;
+  animation: fade-soft var(--dur-base) var(--ease-out);
+  pointer-events: none;
+  z-index: 6;
+}
+
+/* "Now" marker on the last data point — appears once the line finishes
+   drawing, then breathes with a slow expanding ring. */
+.streams-card__end-dot {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--chart-color);
+  transform: translate(-50%, -50%);
+  animation: fade-soft var(--dur-slow) var(--ease-out) 0.8s both;
+  pointer-events: none;
+  z-index: 6;
+}
+
+.streams-card__end-dot::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--chart-color);
+  opacity: 0;
+  animation: end-pulse 3s var(--ease-in-out) 1.4s infinite;
 }
 
 .streams-card__xlabels {
@@ -318,6 +401,29 @@
   font-size: 10.5px;
   line-height: 16px;
   color: #71757d;
+}
+
+/* ── Hover tooltip (anchored to the snapped data point) ──── */
+.streams-card__tip {
+  position: absolute;
+  background: #1d1f23;
+  border: 1px solid #45494f;
+  border-radius: 10px;
+  padding: 8px 13px 9px;
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.55);
+  animation: fade-soft var(--dur-base) var(--ease-out);
+  pointer-events: none;
+  z-index: 21;
+}
+
+.streams-card__tip-time {
+  font-size: 9px;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: #71757d;
+  font-weight: 600;
+  margin-bottom: 3px;
+  white-space: nowrap;
 }
 
 .streams-card__tip-top {
@@ -412,17 +518,45 @@
   margin-top: 2px;
 }
 
-@keyframes drawA {
+@keyframes chart-draw {
   from { stroke-dashoffset: 1; }
   to { stroke-dashoffset: 0; }
 }
 
-@keyframes drawB {
-  from { stroke-dashoffset: 1; }
-  to { stroke-dashoffset: 0; }
-}
-
-@keyframes areaFade {
+@keyframes area-in {
   from { opacity: 0; }
+  60% { opacity: 0.5; }
   to { opacity: 1; }
+}
+
+@keyframes value-in {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes end-pulse {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.45;
+  }
+  75%, 100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .streams-card__line-path,
+  .streams-card__area-path,
+  .streams-card__value-row,
+  .streams-card__end-dot,
+  .streams-card__end-dot::before {
+    animation: none;
+  }
 }
