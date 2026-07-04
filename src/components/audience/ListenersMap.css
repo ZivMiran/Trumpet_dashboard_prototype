@@ -43,38 +43,150 @@
   border: 1px solid #26282d;
   border-radius: 10px;
   overflow: hidden;
-  cursor: default;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
 }
 
-.listeners-map__dots {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+.listeners-map__frame.is-panning {
+  cursor: grabbing;
+}
+
+/* Tooltips flickering mid-drag feel broken; markers wake up again on release. */
+.listeners-map__frame.is-panning .listeners-map__marker {
   pointer-events: none;
 }
 
-.listeners-map__marker {
+/* Soft inner vignette grounds the map in the well. */
+.listeners-map__frame::after {
+  content: '';
   position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 48px rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Pan/zoom map box, positioned and sized in px by JS (cover fit). Markers use
+   % coords inside it, so they share the canvas coordinate space. */
+.listeners-map__stage {
+  position: absolute;
+  z-index: 2;
+}
+
+.listeners-map__controls {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 5;
+}
+
+.listeners-map__ctl {
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  background: rgba(22, 23, 26, 0.8);
+  border: 1px solid #30333a;
+  border-radius: 7px;
+  color: #bdbbb1;
+  cursor: pointer;
+  transition:
+    color var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out),
+    background var(--dur-base) var(--ease-out);
+}
+
+.listeners-map__ctl:hover {
+  color: #f0ede5;
+  border-color: #45494f;
+  background: #272a2f;
+}
+
+.listeners-map__canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  pointer-events: none;
+}
+
+/* Marker = flat gold dot + thin ring annotation. Geometry derives from --s
+   (base size by listener count) times --mk-scale (set by JS from the zoom
+   level), so markers stay proportional to the map at any zoom. */
+.listeners-map__marker {
+  --mk: calc(var(--s, 8px) * var(--mk-scale, 1));
+  position: absolute;
+  width: max(28px, calc(var(--mk) * 3));
+  height: max(28px, calc(var(--mk) * 3));
+  padding: 0;
+  border: 0;
+  background: none;
   transform: translate(-50%, -50%);
   border-radius: 50%;
   cursor: pointer;
-  border: 1px solid #c29620;
-  transition: box-shadow var(--dur-base) var(--ease-out),
-    border-color var(--dur-base) var(--ease-out);
+  display: grid;
+  place-items: center;
+  transition: opacity var(--dur-slow) var(--ease-out);
+  animation: marker-in var(--dur-slow) var(--ease-out) backwards;
 }
 
-.listeners-map__marker:hover {
-  border-color: var(--accent-hover);
-  box-shadow: 0 0 0 4px rgba(227, 181, 58, 0.18);
+@keyframes marker-in {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 }
 
+.listeners-map__marker:hover,
+.listeners-map__marker.is-selected {
+  z-index: 2;
+}
+
+/* When a market is selected, the others recede with the cooled heat. */
+.listeners-map__stage.has-selection .listeners-map__marker:not(.is-selected):not(:hover) {
+  opacity: 0.45;
+}
+
+/* Flat gold core; the dark outline separates it from hot gold dots beneath. */
+.listeners-map__marker-dot {
+  grid-area: 1 / 1;
+  width: var(--mk);
+  height: var(--mk);
+  border-radius: 50%;
+  background: #e3b53a;
+  box-shadow: 0 0 0 2px #16171a;
+  transition:
+    transform var(--dur-base) var(--ease-out),
+    background var(--dur-base) var(--ease-out);
+}
+
+.listeners-map__marker:hover .listeners-map__marker-dot {
+  transform: scale(1.15);
+  background: #f2c860;
+}
+
+/* Thin resting ring — reads as a plotted point, turns solid when selected. */
 .listeners-map__marker-ring {
-  position: absolute;
-  inset: -6px;
-  border: 2px solid #e3b53a;
+  grid-area: 1 / 1;
+  width: calc(var(--mk) * 2.1);
+  height: calc(var(--mk) * 2.1);
+  border: 1.5px solid rgba(227, 181, 58, 0.4);
   border-radius: 50%;
   pointer-events: none;
+  transition:
+    border-color var(--dur-base) var(--ease-out),
+    transform var(--dur-base) var(--ease-out);
+}
+
+.listeners-map__marker:hover .listeners-map__marker-ring {
+  border-color: rgba(242, 200, 96, 0.75);
+}
+
+.listeners-map__marker.is-selected .listeners-map__marker-ring {
+  border: 2px solid #e3b53a;
   animation: ring-in var(--dur-slow) var(--ease-out);
 }
 
@@ -83,26 +195,138 @@
   to { transform: scale(1); opacity: 1; }
 }
 
-.listeners-map__tooltip {
+/* Slow sonar pulse on the top markets — "live listening" ambience. */
+.listeners-map__marker-pulse {
+  grid-area: 1 / 1;
+  width: calc(var(--mk) * 2.1);
+  height: calc(var(--mk) * 2.1);
+  border: 1px solid rgba(227, 181, 58, 0.45);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: marker-pulse 3.6s var(--ease-out) infinite;
+}
+
+@keyframes marker-pulse {
+  0% { transform: scale(0.9); opacity: 0.5; }
+  65% { transform: scale(2.3); opacity: 0; }
+  100% { transform: scale(2.3); opacity: 0; }
+}
+
+.listeners-map__marker-label {
   position: absolute;
-  bottom: 115%;
+  top: calc(100% + 2px);
   left: 50%;
   transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 10.5px;
+  color: #f0ede5;
+  background: rgba(29, 31, 35, 0.9);
+  border: 1px solid #45494f;
+  border-radius: 6px;
+  padding: 2px 7px;
+  pointer-events: none;
+  animation: fade-soft var(--dur-fast) var(--ease-out);
+}
+
+.listeners-map__tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: flex-start;
+  text-align: left;
   white-space: nowrap;
   border: 1px solid #45494f;
   background: #1d1f23;
   border-radius: 8px;
-  padding: 6px 10px;
-  font-size: 11.5px;
+  padding: 8px 11px;
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5);
   z-index: 10;
+  pointer-events: none;
   animation: fade-soft var(--dur-fast) var(--ease-out);
 }
 
+.listeners-map__tooltip--below {
+  bottom: auto;
+  top: calc(100% + 8px);
+}
+
+.listeners-map__tooltip--align-right {
+  left: auto;
+  right: -8px;
+  transform: none;
+}
+
+.listeners-map__tooltip--align-left {
+  left: -8px;
+  right: auto;
+  transform: none;
+}
+
 .listeners-map__tooltip-name {
+  font-size: 13px;
+  font-weight: 500;
   color: #f0ede5;
 }
 
 .listeners-map__tooltip-listeners {
+  font-size: 12px;
+  color: #bdbbb1;
+}
+
+.listeners-map__tooltip-meta {
+  font-size: 11px;
+  color: #8f9299;
+}
+
+.listeners-map__legend,
+.listeners-map__scope {
+  position: absolute;
+  bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px;
+  background: rgba(22, 23, 26, 0.72);
+  border: 1px solid #26282d;
+  border-radius: 999px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.listeners-map__legend {
+  left: 12px;
+}
+
+.listeners-map__legend-bar {
+  width: 72px;
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #33363c, #4c4838, #6f6234, #ab8c2f, #e3b53a);
+}
+
+.listeners-map__legend-label {
+  font-size: 10px;
+  color: #8f9299;
+}
+
+.listeners-map__scope {
+  right: 12px;
+  font-size: 11px;
+  color: #bdbbb1;
+}
+
+.listeners-map__scope-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #e3b53a;
+  flex: none;
+}
+
+.listeners-map__scope-hint {
   color: #8f9299;
 }

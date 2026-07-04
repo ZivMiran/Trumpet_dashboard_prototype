@@ -1,15 +1,17 @@
 import type { AudienceCountry, AudKpiDef, CityRow, TrackRow } from '../types';
 
 export const aBase: AudienceCountry[] = [
-  { id: 'usa', name: 'United States', listeners: '612K', n: 612, left: 22.8, top: 29.1, cont: 'NA' },
-  { id: 'mexico', name: 'Mexico', listeners: '142K', n: 142, left: 21.7, top: 41, cont: 'NA' },
-  { id: 'brazil', name: 'Brazil', listeners: '189K', n: 189, left: 35.8, top: 65.7, cont: 'SA' },
-  { id: 'uk', name: 'United Kingdom', listeners: '126K', n: 126, left: 49.4, top: 17.9, cont: 'EU' },
-  { id: 'germany', name: 'Germany', listeners: '252K', n: 252, left: 52.8, top: 20.1, cont: 'EU' },
-  { id: 'nigeria', name: 'Nigeria', listeners: '88K', n: 88, left: 52.2, top: 51.5, cont: 'AF' },
-  { id: 'india', name: 'India', listeners: '134K', n: 134, left: 71.7, top: 41.8, cont: 'AS' },
-  { id: 'korea', name: 'South Korea', listeners: '147K', n: 147, left: 85.3, top: 30.6, cont: 'AS' },
-  { id: 'japan', name: 'Japan', listeners: '121K', n: 121, left: 88.3, top: 31.3, cont: 'AS' },
+  // left/top: Web Mercator projection of the country centroid, lat cropped to [-56, 74]
+  // (matches src/data/worldMapDots.json — regenerate both via scripts/generate-map-dots.mjs)
+  { id: 'usa', name: 'United States', listeners: '612K', n: 612, left: 22.7, top: 38.5, cont: 'NA' },
+  { id: 'mexico', name: 'Mexico', listeners: '142K', n: 142, left: 21.5, top: 48.9, cont: 'NA' },
+  { id: 'brazil', name: 'Brazil', listeners: '189K', n: 189, left: 35.6, top: 70.3, cont: 'SA' },
+  { id: 'uk', name: 'United Kingdom', listeners: '126K', n: 126, left: 49.3, top: 26.6, cont: 'EU' },
+  { id: 'germany', name: 'Germany', listeners: '252K', n: 252, left: 52.9, top: 29.2, cont: 'EU' },
+  { id: 'nigeria', name: 'Nigeria', listeners: '88K', n: 88, left: 52.4, top: 57.3, cont: 'AF' },
+  { id: 'india', name: 'India', listeners: '134K', n: 134, left: 71.9, top: 50.7, cont: 'AS' },
+  { id: 'korea', name: 'South Korea', listeners: '147K', n: 147, left: 85.5, top: 40.6, cont: 'AS' },
+  { id: 'japan', name: 'Japan', listeners: '121K', n: 121, left: 88.4, top: 40.8, cont: 'AS' },
   { id: 'australia', name: 'Australia', listeners: '64K', n: 64, left: 87.2, top: 76.9, cont: 'OC' },
 ];
 
