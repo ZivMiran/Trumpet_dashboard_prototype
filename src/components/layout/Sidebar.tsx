@@ -2,6 +2,7 @@ import { useApp } from '../../context/AppContext';
 import type { Page } from '../../types';
 import { accountsPool } from '../../data/accounts';
 import { fmtLive } from '../../lib/format';
+import { asset } from '../../lib/assets';
 import { CheckIcon, LogoutIcon, PlusIcon, ChevronDownIcon } from '../icons';
 import './Sidebar.css';
 
@@ -162,7 +163,9 @@ export function Sidebar() {
                     style={{ background: a.id === acctId ? 'rgba(227,181,58,.08)' : 'transparent' }}
                     onClick={() => switchAccount(a.id)}
                   >
-                    <div className="acct-row__avatar" style={{ background: a.color }}>{a.initials}</div>
+                    <div className="acct-row__avatar" style={{ background: a.color }}>
+                      {a.img ? <img className="acct-avatar-img" src={asset(a.img)} alt="" /> : a.initials}
+                    </div>
                     <div className="acct-row__body">
                       <div className="acct-row__name">{a.name}</div>
                       <div className="acct-row__sub">
@@ -194,7 +197,9 @@ export function Sidebar() {
           onClick={toggleAcct}
           title={sidebarCollapsed ? curAcct.name : undefined}
         >
-          <div className="acct-trigger__avatar" style={{ background: curAcct.color }}>{curAcct.initials}</div>
+          <div className="acct-trigger__avatar" style={{ background: curAcct.color }}>
+            {curAcct.img ? <img className="acct-avatar-img" src={asset(curAcct.img)} alt="" /> : curAcct.initials}
+          </div>
           <div className="acct-trigger__body">
             <div className="acct-trigger__name">{curAcct.name}</div>
             <div className="acct-trigger__live-row">

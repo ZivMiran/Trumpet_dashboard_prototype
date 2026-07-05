@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { catalog, collections } from '../../data/catalog';
 import { parseAdds } from '../../lib/format';
 import { trendRank, typeOf, typeRank, typeDotOf } from '../../lib/music';
+import { asset } from '../../lib/assets';
 import type { TrackFormat } from '../../types';
 import './CatalogTable.css';
 
@@ -153,8 +154,8 @@ export function CatalogTable() {
                     <td className="catalog-table__td catalog-table__td--track">
                       {active && <div className="catalog-table__active-bar" />}
                       <div className="catalog-table__track-cell">
-                        <div className={`catalog-table__icon ${isCollection ? 'catalog-table__icon--coll' : ''}`}>
-                          <NoteIcon />
+                        <div className={`catalog-table__icon ${isCollection ? 'catalog-table__icon--coll' : ''} ${r.img ? 'catalog-table__icon--cover' : ''}`}>
+                          {r.img ? <img className="catalog-table__cover" src={asset(r.img)} alt="" loading="lazy" /> : <NoteIcon />}
                         </div>
                         <div className="catalog-table__track-text">
                           <div className="catalog-table__track-title">{r.title}</div>

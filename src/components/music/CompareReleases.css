@@ -427,6 +427,16 @@
   border-radius: 50%;
 }
 
+.compare__picker-cover {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 5px;
+  object-fit: cover;
+  display: block;
+  background: #16171a;
+}
+
 .compare__picker-name {
   flex: 1;
   min-width: 0;

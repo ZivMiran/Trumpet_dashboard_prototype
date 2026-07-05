@@ -2,6 +2,7 @@ import { useApp } from '../../context/AppContext';
 import { catalog, collections } from '../../data/catalog';
 import { parsePlays, growthColor } from '../../lib/format';
 import { typeOf } from '../../lib/music';
+import { asset } from '../../lib/assets';
 import { NoteIcon, CloseIcon, DownloadIcon, CompareIcon } from '../icons';
 import './AlbumBreakdownDrawer.css';
 
@@ -53,8 +54,8 @@ export function AlbumBreakdownDrawer() {
 
         <div className="album-drawer__body">
           <div className="album-drawer__top">
-            <div className="album-drawer__cover">
-              <NoteIcon size={32} color="currentColor" />
+            <div className={`album-drawer__cover ${r.img ? 'album-drawer__cover--img' : ''}`}>
+              {r.img ? <img className="album-drawer__cover-img" src={asset(r.img)} alt="" /> : <NoteIcon size={32} color="currentColor" />}
             </div>
             <div className="album-drawer__top-text">
               <div className="album-drawer__title">{r.title}</div>

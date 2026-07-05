@@ -16,6 +16,7 @@ import {
   type CompareMetric,
 } from '../../lib/compare';
 import { CloseIcon, ChevronDownIcon, CompareIcon, SearchIcon, CheckIcon } from '../icons';
+import { asset } from '../../lib/assets';
 import './CompareReleases.css';
 
 const COLOR_A = '#e3b53a';
@@ -68,7 +69,11 @@ function TrackPickerMenu({
               className={`compare__picker-row ${x.i === currentIdx ? 'compare__picker-row--active' : ''}`}
               onClick={() => onPick(x.i)}
             >
-              <span className="compare__picker-dot" style={{ background: typeDotOf(x.r) }} />
+              {x.r.img ? (
+                <img className="compare__picker-cover" src={asset(x.r.img)} alt="" loading="lazy" />
+              ) : (
+                <span className="compare__picker-dot" style={{ background: typeDotOf(x.r) }} />
+              )}
               <span className="compare__picker-name">{x.r.title}</span>
               <span className="compare__picker-fmt">{typeOf(x.r)}</span>
               {x.i === currentIdx && <CheckIcon size={14} />}

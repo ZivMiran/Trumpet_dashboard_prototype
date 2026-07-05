@@ -1,6 +1,7 @@
 import { useApp } from '../../context/AppContext';
 import { catalog, tfDefs } from '../../data/catalog';
 import { fmtStreams } from '../../lib/format';
+import { asset } from '../../lib/assets';
 import type { Timeframe } from '../../types';
 import './MoversWidget.css';
 
@@ -25,6 +26,7 @@ export function MoversWidget() {
     sub: `#${rank + 1} by streams · ${tfDef.phrase}`,
     streams: fmtStreams(catalog[i]._s * tfDef.f),
     spark: tfDef.spark,
+    cover: catalog[i].img ? asset(catalog[i].img!) : null,
     coll: !!catalog[i].coll,
     selected: catalog[i].coll ? i === state.albumSel : i === state.sel,
   }));
@@ -61,12 +63,16 @@ export function MoversWidget() {
             onClick={() => openMover(m)}
           >
             <div className="movers-widget__card-top">
-              <div className="movers-widget__icon">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M9 18V5l12-2v13" />
-                  <circle cx="6" cy="18" r="3" />
-                  <circle cx="18" cy="16" r="3" />
-                </svg>
+              <div className={`movers-widget__icon ${m.cover ? 'movers-widget__icon--cover' : ''}`}>
+                {m.cover ? (
+                  <img className="movers-widget__cover" src={m.cover} alt="" loading="lazy" />
+                ) : (
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 18V5l12-2v13" />
+                    <circle cx="6" cy="18" r="3" />
+                    <circle cx="18" cy="16" r="3" />
+                  </svg>
+                )}
               </div>
               <div className="movers-widget__card-text">
                 <div className="movers-widget__card-title">{m.title}</div>

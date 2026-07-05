@@ -22,6 +22,7 @@ export interface CatalogTrack {
   spark: string;
   growth: string;
   market: string;
+  img?: string;
 }
 
 export interface CollectionTrack {
@@ -43,6 +44,7 @@ export interface Account {
   initials: string;
   monthly: string;
   color: string;
+  img?: string;
 }
 
 export interface Notification {

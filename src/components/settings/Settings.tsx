@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import { platforms } from '../../data/settings';
+import { accountsPool } from '../../data/accounts';
+import { asset } from '../../lib/assets';
 import './Settings.css';
+
+const profile = accountsPool.find((a) => a.name === 'Echo Theory');
 
 const navItems = ['Account', 'Notifications', 'Connected platforms', 'Billing'];
 
@@ -42,7 +46,9 @@ export function Settings() {
             </div>
             <div className="settings-profile">
               <div className="settings-profile__row">
-                <div className="settings-profile__avatar">ET</div>
+                <div className="settings-profile__avatar">
+                  {profile?.img ? <img className="settings-profile__avatar-img" src={asset(profile.img)} alt="" /> : 'ET'}
+                </div>
                 <div className="settings-profile__id">
                   <div className="settings-profile__name">Echo Theory</div>
                   <div className="settings-profile__meta">Verified artist · joined 2021</div>

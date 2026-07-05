@@ -113,6 +113,22 @@
   align-items: center;
   justify-content: center;
   color: #71757d;
+  overflow: hidden;
+}
+
+.movers-widget__icon--cover {
+  background: #16171a;
+}
+
+.movers-widget__cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.movers-widget__card:hover .movers-widget__icon--cover {
+  background: #16171a;
 }
 
 .movers-widget__card-text {

@@ -2,6 +2,7 @@ import { useApp, type DrillTrack } from '../../context/AppContext';
 import { catalog } from '../../data/catalog';
 import { makeWrand } from '../../lib/seed';
 import { growthColor } from '../../lib/format';
+import { asset, coverFor } from '../../lib/assets';
 import { CompareIcon } from '../icons';
 import type { CatalogTrack } from '../../types';
 import './TrackDetailDrawer.css';
@@ -15,6 +16,9 @@ export function TrackDetailDrawer() {
   if (!hasSel) return null;
 
   const cur: DrillTrack | CatalogTrack = selTrack ?? catalog[sel!];
+  // A selected release carries its own cover; a collection sub-track borrows its
+  // parent album's artwork (its `album` field holds the parent title).
+  const cover = selTrack ? coverFor(selTrack.album) : catalog[sel!].img ? asset(catalog[sel!].img!) : undefined;
   const close = () => update({ sel: null, selTrack: null });
 
   // Compare opens on the current release — for a collection track, its parent album.
@@ -73,12 +77,16 @@ export function TrackDetailDrawer() {
 
         <div className="track-drawer__body">
           <div className="track-drawer__top">
-            <div className="track-drawer__icon">
-              <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M9 18V5l12-2v13" />
-                <circle cx="6" cy="18" r="3" />
-                <circle cx="18" cy="16" r="3" />
-              </svg>
+            <div className={`track-drawer__icon ${cover ? 'track-drawer__icon--cover' : ''}`}>
+              {cover ? (
+                <img className="track-drawer__cover" src={cover} alt="" />
+              ) : (
+                <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 18V5l12-2v13" />
+                  <circle cx="6" cy="18" r="3" />
+                  <circle cx="18" cy="16" r="3" />
+                </svg>
+              )}
             </div>
             <div className="track-drawer__top-text">
               <div className="track-drawer__title">{cur.title}</div>

@@ -251,6 +251,18 @@
   color: var(--accent);
 }
 
+.catalog-table__icon--cover {
+  background: #16171a;
+  overflow: hidden;
+}
+
+.catalog-table__cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 .catalog-table__row:hover .catalog-table__icon {
   color: var(--text-secondary);
 }

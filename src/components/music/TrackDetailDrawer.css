@@ -86,6 +86,18 @@
   align-items: center;
   justify-content: center;
   color: #71757d;
+  overflow: hidden;
+}
+
+.track-drawer__icon--cover {
+  background: #16171a;
+}
+
+.track-drawer__cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .track-drawer__top-text {
