@@ -47,6 +47,7 @@ export interface AppState {
   expanded: Record<number, boolean>;
   region: string | null;
   continent: string;
+  mapTf: Timeframe;
   hovered: string | null;
   audKpi: number | null;
   citiesAll: boolean;
@@ -84,6 +85,7 @@ const initialState: AppState = {
   expanded: {},
   region: null,
   continent: 'World',
+  mapTf: '1M',
   hovered: null,
   audKpi: null,
   citiesAll: false,

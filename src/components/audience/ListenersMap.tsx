@@ -1,15 +1,16 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
-import { aBase } from '../../data/audience';
-import { scopeNameFor } from '../../lib/audience';
+import { aBase, mapTfConfig } from '../../data/audience';
+import { marketsForTf, scopeNameFor } from '../../lib/audience';
 import {
   MAP_ASPECT,
-  buildMarkers,
   computeHeatIndex,
   coverSize,
   drawHeatDots,
   drawOcean,
+  heatMarkersFrom,
 } from '../../lib/mapHeat';
+import type { Timeframe } from '../../types';
 import worldMapDots from '../../data/worldMapDots.json';
 import './ListenersMap.css';
 
@@ -18,15 +19,7 @@ for (let i = 0; i < worldMapDots.dots.length; i++) {
   DOTS[i] = worldMapDots.dots[i] / worldMapDots.scale;
 }
 
-const MARKERS = buildMarkers();
-const MAX_N = Math.max(...aBase.map((m) => m.n));
-const TOTAL_N = aBase.reduce((s, m) => s + m.n, 0);
-const RANKS: Record<string, number> = {};
-[...aBase]
-  .sort((a, b) => b.n - a.n)
-  .forEach((m, i) => {
-    RANKS[m.id] = i + 1;
-  });
+const TF_KEYS: Timeframe[] = ['1D', '1W', '1M', '1Y', 'All'];
 
 const MIN_ZOOM = 1;
 const MAX_ZOOM = 5;
@@ -44,6 +37,17 @@ const reducedMotion = () =>
 
 export function ListenersMap() {
   const { state, update } = useApp();
+
+  // Markets, heat, ranks and totals all derive from the selected timeframe.
+  const markets = useMemo(() => marketsForTf(state.mapTf), [state.mapTf]);
+  const heatMarkers = useMemo(() => heatMarkersFrom(markets), [markets]);
+  const maxN = useMemo(() => Math.max(...markets.map((m) => m.n)), [markets]);
+  const totalN = useMemo(() => markets.reduce((s, m) => s + m.n, 0), [markets]);
+  const ranks = useMemo(() => {
+    const r: Record<string, number> = {};
+    [...markets].sort((a, b) => b.n - a.n).forEach((m, i) => (r[m.id] = i + 1));
+    return r;
+  }, [markets]);
 
   const frameRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -71,7 +75,7 @@ export function ListenersMap() {
     ctx.clearRect(0, 0, w, h);
     const anim = animRef.current;
     if (anim.heatDirty) {
-      computeHeatIndex(DOTS, MARKERS, anim.weights, anim.progress, heatIdxRef.current);
+      computeHeatIndex(DOTS, heatMarkers, anim.weights, anim.progress, heatIdxRef.current);
       anim.heatDirty = false;
     }
     const box = { cssW: w, cssH: h, mapX, mapY, mapW, mapH };
@@ -87,7 +91,7 @@ export function ListenersMap() {
       dots: DOTS,
       heatIndex: heatIdxRef.current,
       spacingXPct: worldMapDots.spacingX,
-      markers: MARKERS,
+      markers: heatMarkers,
       weights: anim.weights,
       progress: anim.progress,
       dotScale,
@@ -226,6 +230,12 @@ export function ListenersMap() {
     return () => cancelAnimationFrame(anim.raf);
   }, [state.region]);
 
+  // Timeframe change: rebuild the heat from the new market weights and repaint.
+  useEffect(() => {
+    animRef.current.heatDirty = true;
+    redrawRef.current();
+  }, [state.mapTf]);
+
   const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (e.button !== 0) return;
     dragRef.current = { active: true, moved: false, lastX: e.clientX, lastY: e.clientY };
@@ -282,7 +292,20 @@ export function ListenersMap() {
     <section className="listeners-map">
       <div className="listeners-map__head">
         <div className="listeners-map__title">Listeners Map</div>
-        <span className="listeners-map__sub">{aBase.length} markets · drag to pan · scroll to zoom</span>
+        <div className="listeners-map__tf" role="group" aria-label="Timeframe">
+          {TF_KEYS.map((k) => (
+            <button
+              key={k}
+              type="button"
+              title={mapTfConfig[k].label}
+              aria-pressed={state.mapTf === k}
+              className={`listeners-map__tf-btn${state.mapTf === k ? ' is-active' : ''}`}
+              onClick={() => update({ mapTf: k })}
+            >
+              {k}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="listeners-map__body">
@@ -300,8 +323,8 @@ export function ListenersMap() {
           <canvas className="listeners-map__canvas" ref={canvasRef} aria-hidden="true" />
 
           <div className={`listeners-map__stage${state.region ? ' has-selection' : ''}`} ref={stageRef}>
-            {aBase.map((m, i) => {
-              const size = Math.round(6 + 5 * (m.n / MAX_N));
+            {markets.map((m, i) => {
+              const size = Math.round(6 + 5 * (m.n / maxN));
               const selected = state.region === m.id;
               const hovered = state.hovered === m.id;
               // Tooltip flips derive from the marker's on-screen position (the
@@ -338,7 +361,7 @@ export function ListenersMap() {
                   onMouseEnter={() => update({ hovered: m.id })}
                   onMouseLeave={() => update((s) => (s.hovered === m.id ? { hovered: null } : null))}
                 >
-                  {(RANKS[m.id] <= 3 || selected) && (
+                  {(ranks[m.id] <= 3 || selected) && (
                     <span className="listeners-map__marker-pulse" style={{ animationDelay: `${i * 400}ms` }} />
                   )}
                   <span className="listeners-map__marker-ring" />
@@ -349,7 +372,7 @@ export function ListenersMap() {
                       <span className="listeners-map__tooltip-name">{m.name}</span>
                       <span className="listeners-map__tooltip-listeners">{m.listeners} listeners</span>
                       <span className="listeners-map__tooltip-meta">
-                        {Math.round((m.n / TOTAL_N) * 100)}% of audience · #{RANKS[m.id]} market
+                        {Math.round((m.n / totalN) * 100)}% of audience · #{ranks[m.id]} market
                       </span>
                     </span>
                   )}

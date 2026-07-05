@@ -35,6 +35,17 @@ export function buildMarkers(): HeatMarker[] {
   });
 }
 
+// Heat markers from an arbitrary market list (e.g. a timeframe-scaled set).
+// Weight is relative to the peak within the same list, so the heat spread
+// reflects that timeframe's own distribution.
+export function heatMarkersFrom(list: { left: number; top: number; n: number }[]): HeatMarker[] {
+  const max = Math.max(...list.map((m) => m.n)) || 1;
+  return list.map((m) => {
+    const w = m.n / max;
+    return { x: m.left, y: m.top, w, sigma: 1.7 + 2.6 * Math.sqrt(w) };
+  });
+}
+
 // Base map size that COVERS the frame (fills it fully, overflow pannable).
 export function coverSize(frameW: number, frameH: number, aspect: number) {
   const h = Math.max(frameH, frameW / aspect);

@@ -27,13 +27,18 @@ export function AudienceSourcesBento() {
   const hasRegion = !!rid;
   const citiesScope = rid ? 'within ' + name : 'worldwide';
 
-  const allTrackRows = allTrackRowsFor(rid);
+  const tf = state.mapTf;
+  const allTrackRows = allTrackRowsFor(rid, tf);
   const tracksMore = allTrackRows.length > 4;
   const topTracksShown = state.tracksAll ? allTrackRows : allTrackRows.slice(0, 4);
 
-  const allCityRows = allCitiesFor(rid);
+  const allCityRows = allCitiesFor(rid, tf);
   const citiesMore = allCityRows.length > 4;
   const citiesShown = state.citiesAll ? allCityRows : allCityRows.slice(0, 4);
+
+  // Remount the lists when the scope (region) or timeframe changes so the rows
+  // replay their staggered entrance — the panel visibly "refreshes".
+  const listKey = `${rid ?? 'global'}-${tf}`;
 
   return (
     <section className="audience-sources">
@@ -59,11 +64,12 @@ export function AudienceSourcesBento() {
             <div className="audience-sources__section-title">Top Tracks</div>
             <span className="audience-sources__section-sub">{citiesScope}</span>
           </div>
-          <div className="audience-sources__list">
-            {topTracksShown.map((t) => (
+          <div className="audience-sources__list" key={`t-${listKey}`}>
+            {topTracksShown.map((t, i) => (
               <div
                 key={t.label}
                 className="audience-sources__row"
+                style={{ animationDelay: `${i * 35}ms` }}
                 onClick={() => update({ trkDetail: { label: t.label, plays: t.plays, rank: t.rank } })}
               >
                 <div className="audience-sources__rank">{t.rank}</div>
@@ -88,11 +94,12 @@ export function AudienceSourcesBento() {
             <div className="audience-sources__section-title">Top Cities</div>
             <span className="audience-sources__section-sub">{citiesScope}</span>
           </div>
-          <div className="audience-sources__list">
-            {citiesShown.map((c) => (
+          <div className="audience-sources__list" key={`c-${listKey}`}>
+            {citiesShown.map((c, i) => (
               <div
                 key={c.name}
                 className="audience-sources__row"
+                style={{ animationDelay: `${i * 35}ms` }}
                 onClick={() =>
                   update({ cityDetail: { name: c.name, count: c.count, rank: c.rank, arrow: c.arrow, arrowColor: c.arrowColor } })
                 }

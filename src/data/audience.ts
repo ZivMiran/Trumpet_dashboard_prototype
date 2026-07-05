@@ -1,4 +1,4 @@
-import type { AudienceCountry, AudKpiDef, CityRow, TrackRow } from '../types';
+import type { AudienceCountry, AudKpiDef, CityRow, TrackRow, Timeframe } from '../types';
 
 export const aBase: AudienceCountry[] = [
   // left/top: Web Mercator projection of the country centroid, lat cropped to [-56, 74]
@@ -14,6 +14,19 @@ export const aBase: AudienceCountry[] = [
   { id: 'japan', name: 'Japan', listeners: '121K', n: 121, left: 88.4, top: 40.8, cont: 'AS' },
   { id: 'australia', name: 'Australia', listeners: '64K', n: 64, left: 87.2, top: 76.9, cont: 'OC' },
 ];
+
+// Timeframe scaling for the Listeners Map. 1M is the baseline (matches the
+// Monthly Listeners KPI); shorter windows are smaller, longer ones larger.
+// `trend` shifts the relative mix: short windows favour high-momentum (surging)
+// markets, long windows flatten toward mature ones — so the heat visibly
+// redistributes when you switch timeframe, not just the totals.
+export const mapTfConfig: Record<Timeframe, { scale: number; trend: number; label: string }> = {
+  '1D': { scale: 0.05, trend: 0.55, label: 'Last 24 hours' },
+  '1W': { scale: 0.28, trend: 0.3, label: 'Last 7 days' },
+  '1M': { scale: 1, trend: 0, label: 'Last 30 days' },
+  '1Y': { scale: 7.5, trend: -0.3, label: 'Last 12 months' },
+  All: { scale: 15, trend: -0.5, label: 'All time' },
+};
 
 export const continentLabels = ['World', 'N. America', 'Europe', 'Asia'] as const;
 export const contMap: Record<string, string | null> = { World: null, 'N. America': 'NA', Europe: 'EU', Asia: 'AS' };
