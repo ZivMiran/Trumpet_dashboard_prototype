@@ -51,9 +51,17 @@ const SettingsIcon = () => (
   </svg>
 );
 
+const CollapseIcon = ({ collapsed }: { collapsed: boolean }) => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="4" width="18" height="16" rx="2" />
+    <path d="M9 4v16" />
+    <path d={collapsed ? 'M14 9l3 3-3 3' : 'M5.5 12h.01'} />
+  </svg>
+);
+
 export function Sidebar() {
   const { state, update } = useApp();
-  const { page, activeAccts, liveCounts, acctOpen } = state;
+  const { page, activeAccts, liveCounts, acctOpen, sidebarCollapsed } = state;
 
   const acctId = activeAccts.includes(state.acctId) ? state.acctId : activeAccts[0];
   const curAcct = accountsPool.find((a) => a.id === acctId) || accountsPool[0];
@@ -61,6 +69,7 @@ export function Sidebar() {
   const canAddAccount = !!nextToAdd;
 
   const goto = (p: Page) => update({ page: p });
+  const toggleCollapse = () => update((s) => ({ sidebarCollapsed: !s.sidebarCollapsed, acctOpen: false }));
   const toggleAcct = () => update((s) => ({ acctOpen: !s.acctOpen }));
   const closeAcct = () => update({ acctOpen: false });
 
@@ -80,7 +89,7 @@ export function Sidebar() {
   };
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${sidebarCollapsed ? 'sidebar--collapsed' : ''}`}>
       <div className="sidebar__brand">
         <div className="sidebar__logo">
           <svg width="20" height="16" viewBox="43 41 129 103" fill="none" aria-hidden="true">
@@ -91,6 +100,15 @@ export function Sidebar() {
           </svg>
         </div>
         <div className="sidebar__wordmark">Trumpet</div>
+        <button
+          type="button"
+          className="sidebar__collapse"
+          onClick={toggleCollapse}
+          title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        >
+          <CollapseIcon collapsed={sidebarCollapsed} />
+        </button>
       </div>
 
       <div className="sidebar__section-label">Workspace</div>
@@ -102,10 +120,11 @@ export function Sidebar() {
               key={it.key}
               type="button"
               onClick={() => goto(it.key)}
+              title={sidebarCollapsed ? it.label : undefined}
               className={`nav-item ${active ? 'nav-item--active' : 'nav-item--inactive'}`}
             >
               {it.icon}
-              {it.label}
+              <span className="nav-item__label">{it.label}</span>
             </button>
           );
         })}
@@ -116,10 +135,11 @@ export function Sidebar() {
         <button
           type="button"
           onClick={() => goto('settings')}
+          title={sidebarCollapsed ? 'Settings' : undefined}
           className={`nav-item ${page === 'settings' ? 'nav-item--active' : 'nav-item--inactive'}`}
         >
           <SettingsIcon />
-          Settings
+          <span className="nav-item__label">Settings</span>
         </button>
       </nav>
 
@@ -168,7 +188,12 @@ export function Sidebar() {
           </>
         )}
 
-        <button type="button" className={`acct-trigger ${acctOpen ? 'acct-trigger--open' : ''}`} onClick={toggleAcct}>
+        <button
+          type="button"
+          className={`acct-trigger ${acctOpen ? 'acct-trigger--open' : ''}`}
+          onClick={toggleAcct}
+          title={sidebarCollapsed ? curAcct.name : undefined}
+        >
           <div className="acct-trigger__avatar" style={{ background: curAcct.color }}>{curAcct.initials}</div>
           <div className="acct-trigger__body">
             <div className="acct-trigger__name">{curAcct.name}</div>

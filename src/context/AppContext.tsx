@@ -68,6 +68,7 @@ export interface AppState {
   acctId: string;
   activeAccts: string[];
   liveCounts: Record<string, number>;
+  sidebarCollapsed: boolean;
 }
 
 const initialState: AppState = {
@@ -106,6 +107,7 @@ const initialState: AppState = {
   acctId: 'echo',
   activeAccts: ['echo', 'nova'],
   liveCounts: { ...initialLiveCounts },
+  sidebarCollapsed: false,
 };
 
 type Patch = Partial<AppState> | ((s: AppState) => Partial<AppState> | null);

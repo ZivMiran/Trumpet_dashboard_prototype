@@ -11,8 +11,10 @@ export function MoversWidget() {
   const moverTf = state.moverTf;
   const tfDef = tfDefs[moverTf];
 
+  // Singles only — no albums or EPs (those are collections, flagged with `coll`).
   const topIdx = catalog
-    .map((r, i) => ({ i, s: r._s }))
+    .map((r, i) => ({ i, s: r._s, fmt: r.fmt }))
+    .filter((o) => o.fmt === 'Single')
     .sort((a, b) => b.s - a.s)
     .slice(0, 4)
     .map((o) => o.i);
@@ -36,8 +38,8 @@ export function MoversWidget() {
   return (
     <div className="movers-widget">
       <div className="movers-widget__head">
-        <div className="movers-widget__title">Top performing releases</div>
-        <div className="movers-widget__sub">your highest-streaming releases — click to drill in</div>
+        <div className="movers-widget__title">Top performing tracks</div>
+        <div className="movers-widget__sub">your highest-streaming tracks — click to drill in</div>
         <div className="movers-widget__tabs">
           {moverTfs.map((t) => (
             <button
