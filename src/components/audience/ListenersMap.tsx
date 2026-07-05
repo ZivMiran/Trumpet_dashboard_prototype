@@ -26,6 +26,17 @@ const MAX_ZOOM = 5;
 // Default view: mid-Atlantic between the two biggest clusters (USA + Europe).
 const HOME_VIEW = { zoom: 1, cx: 37, cy: 50 };
 
+// Camera feel. Every input moves a *target* view; a single follower loop
+// eases the visible view toward it (exponential approach, ~TAU ms to close
+// 63% of the gap). One system covers wheel zoom, buttons, reset, marker
+// focus and flick momentum — and any new input just retargets mid-flight,
+// so motion is always interruptible and never fights itself.
+const CAM_TAU = 110;
+// Zoom a clicked market flies to (deep enough to center edge markets too).
+const FOCUS_ZOOM = 2.6;
+// How far a released flick glides: velocity (px/ms) times this many ms.
+const GLIDE_MS = 160;
+
 // Entrance bloom plays once per app session (survives StrictMode double-mount
 // and Overview <-> Audience navigation).
 let hasBloomed = false;
@@ -55,7 +66,10 @@ export function ListenersMap() {
   const sizeRef = useRef({ w: 0, h: 0, dpr: 1, mapX: 0, mapY: 0, mapW: 0, mapH: 0 });
   // View = zoom level + which map point (%) sits at the frame center.
   const viewRef = useRef({ ...HOME_VIEW });
-  const dragRef = useRef({ active: false, moved: false, lastX: 0, lastY: 0 });
+  // Where the camera is heading; the follower eases viewRef toward this.
+  const targetRef = useRef({ ...HOME_VIEW });
+  const followRef = useRef({ raf: 0, lastT: 0 });
+  const dragRef = useRef({ active: false, moved: false, lastX: 0, lastY: 0, lastT: 0, vx: 0, vy: 0 });
   const animRef = useRef({
     weights: aBase.map(() => 1),
     progress: hasBloomed ? 1 : 0,
@@ -126,19 +140,86 @@ export function ListenersMap() {
   const applyViewRef = useRef(applyView);
   applyViewRef.current = applyView;
 
-  const zoomAt = (fx: number, fy: number, factor: number) => {
-    const view = viewRef.current;
-    const { w: frameW, h: frameH, mapX, mapY, mapW } = sizeRef.current;
-    const newZoom = clamp(view.zoom * factor, MIN_ZOOM, MAX_ZOOM);
-    if (newZoom === view.zoom || frameW <= 0) return;
-    const scale = newZoom / view.zoom;
-    // Keep the map point under (fx, fy) anchored while scaling.
-    const panX = fx - (fx - mapX) * scale;
-    const panY = fy - (fy - mapY) * scale;
-    view.zoom = newZoom;
-    view.cx = ((frameW / 2 - panX) / (mapW * scale)) * 100;
-    view.cy = ((frameH / 2 - panY) / (sizeRef.current.mapH * scale)) * 100;
-    applyViewRef.current();
+  // Clamp the target so the camera never aims past the map edges (the glide
+  // then settles smoothly at the boundary instead of hitting a wall).
+  const clampTarget = () => {
+    const t = targetRef.current;
+    const { w: frameW, h: frameH } = sizeRef.current;
+    t.zoom = clamp(t.zoom, MIN_ZOOM, MAX_ZOOM);
+    if (frameW <= 0) return;
+    const base = coverSize(frameW, frameH, MAP_ASPECT);
+    const halfX = (50 * frameW) / (base.w * t.zoom);
+    const halfY = (50 * frameH) / (base.h * t.zoom);
+    t.cx = clamp(t.cx, halfX, 100 - halfX);
+    t.cy = clamp(t.cy, halfY, 100 - halfY);
+  };
+
+  const stopFollow = () => {
+    cancelAnimationFrame(followRef.current.raf);
+    followRef.current.raf = 0;
+  };
+
+  // The one camera loop: ease the view toward the target in log-zoom space
+  // (constant perceived rate at any scale), frame-rate independent.
+  const startFollow = () => {
+    clampTarget();
+    if (reducedMotion()) {
+      stopFollow();
+      Object.assign(viewRef.current, targetRef.current);
+      applyViewRef.current();
+      return;
+    }
+    if (followRef.current.raf) return; // already running; it reads the new target
+    followRef.current.lastT = performance.now();
+    const tick = (now: number) => {
+      const dt = Math.min(now - followRef.current.lastT, 64);
+      followRef.current.lastT = now;
+      const k = 1 - Math.exp(-dt / CAM_TAU);
+      const view = viewRef.current;
+      const t = targetRef.current;
+      view.zoom = Math.exp(Math.log(view.zoom) + Math.log(t.zoom / view.zoom) * k);
+      view.cx += (t.cx - view.cx) * k;
+      view.cy += (t.cy - view.cy) * k;
+      const done =
+        Math.abs(Math.log(t.zoom / view.zoom)) < 0.001 &&
+        Math.abs(t.cx - view.cx) < 0.02 &&
+        Math.abs(t.cy - view.cy) < 0.02;
+      if (done) {
+        Object.assign(view, t);
+        followRef.current.raf = 0;
+      } else {
+        followRef.current.raf = requestAnimationFrame(tick);
+      }
+      applyViewRef.current();
+    };
+    followRef.current.raf = requestAnimationFrame(tick);
+  };
+
+  // Retarget the zoom, keeping the map point under (fx, fy) anchored there.
+  const zoomTargetAt = (fx: number, fy: number, factor: number) => {
+    const { w: frameW, h: frameH, mapX, mapY, mapW, mapH } = sizeRef.current;
+    if (frameW <= 0 || mapW <= 0) return;
+    const t = targetRef.current;
+    const newZoom = clamp(t.zoom * factor, MIN_ZOOM, MAX_ZOOM);
+    // Map point (%) currently under the cursor…
+    const px = ((fx - mapX) / mapW) * 100;
+    const py = ((fy - mapY) / mapH) * 100;
+    // …stays under the cursor at the target zoom.
+    const base = coverSize(frameW, frameH, MAP_ASPECT);
+    t.zoom = newZoom;
+    t.cx = px + ((frameW / 2 - fx) * 100) / (base.w * newZoom);
+    t.cy = py + ((frameH / 2 - fy) * 100) / (base.h * newZoom);
+    startFollow();
+  };
+
+  // Fly to a market: center it and land at a focused zoom (never zooms out
+  // if the user is already in closer).
+  const focusMarket = (m: { left: number; top: number }) => {
+    const t = targetRef.current;
+    t.zoom = Math.max(t.zoom, FOCUS_ZOOM);
+    t.cx = m.left;
+    t.cy = m.top;
+    startFollow();
   };
 
   // Layout: canvas backing spans the frame; view derives the map box.
@@ -168,12 +249,15 @@ export function ListenersMap() {
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
       const rect = frame.getBoundingClientRect();
-      zoomAt(e.clientX - rect.left, e.clientY - rect.top, Math.exp(-e.deltaY * 0.0016));
+      zoomTargetAt(e.clientX - rect.left, e.clientY - rect.top, Math.exp(-e.deltaY * 0.0016));
     };
     frame.addEventListener('wheel', onWheel, { passive: false });
     return () => frame.removeEventListener('wheel', onWheel);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Stop the camera loop if the component unmounts mid-flight.
+  useEffect(() => () => cancelAnimationFrame(followRef.current.raf), []);
 
   // Entrance bloom: heat and dot alpha rise over 600ms, once per session.
   useEffect(() => {
@@ -238,7 +322,10 @@ export function ListenersMap() {
 
   const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (e.button !== 0) return;
-    dragRef.current = { active: true, moved: false, lastX: e.clientX, lastY: e.clientY };
+    // Grabbing the map halts any in-flight camera motion, right where it is.
+    stopFollow();
+    Object.assign(targetRef.current, viewRef.current);
+    dragRef.current = { active: true, moved: false, lastX: e.clientX, lastY: e.clientY, lastT: performance.now(), vx: 0, vy: 0 };
   };
 
   const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -249,9 +336,20 @@ export function ListenersMap() {
     if (!drag.moved) {
       if (Math.abs(e.clientX - drag.lastX) + Math.abs(e.clientY - drag.lastY) < 4) return;
       drag.moved = true;
-      frameRef.current?.setPointerCapture(e.pointerId);
+      // Capture can throw if the pointer vanished mid-gesture (or is synthetic).
+      try {
+        frameRef.current?.setPointerCapture(e.pointerId);
+      } catch {
+        /* pan still works without capture */
+      }
       frameRef.current?.classList.add('is-panning');
     }
+    // Smoothed pointer velocity (px/ms) for the release glide.
+    const now = performance.now();
+    const dt = Math.max(now - drag.lastT, 1);
+    drag.vx = drag.vx * 0.6 + (dx / dt) * 0.4;
+    drag.vy = drag.vy * 0.6 + (dy / dt) * 0.4;
+    drag.lastT = now;
     drag.lastX = e.clientX;
     drag.lastY = e.clientY;
     const view = viewRef.current;
@@ -260,13 +358,29 @@ export function ListenersMap() {
     view.cx -= (dx / mapW) * 100;
     view.cy -= (dy / mapH) * 100;
     applyViewRef.current();
+    // Keep the target pinned to the finger while dragging (1:1 tracking).
+    Object.assign(targetRef.current, viewRef.current);
   };
 
   const endDrag = (e: React.PointerEvent<HTMLDivElement>) => {
     const drag = dragRef.current;
     if (drag.active && drag.moved) {
-      frameRef.current?.releasePointerCapture(e.pointerId);
+      try {
+        frameRef.current?.releasePointerCapture(e.pointerId);
+      } catch {
+        /* capture may never have been taken */
+      }
       frameRef.current?.classList.remove('is-panning');
+      // Flick momentum: project the release velocity a beat further and let
+      // the follower glide there (stale flicks decay via the EMA above).
+      const { mapW, mapH } = sizeRef.current;
+      const idle = performance.now() - drag.lastT > 90;
+      if (!idle && mapW > 0 && Math.hypot(drag.vx, drag.vy) > 0.08) {
+        const t = targetRef.current;
+        t.cx = viewRef.current.cx - ((drag.vx * GLIDE_MS) / mapW) * 100;
+        t.cy = viewRef.current.cy - ((drag.vy * GLIDE_MS) / mapH) * 100;
+        startFollow();
+      }
     }
     drag.active = false;
     // drag.moved is consumed by the click handlers right after pointerup.
@@ -279,13 +393,15 @@ export function ListenersMap() {
   };
 
   const zoomFromCenter = (factor: number) => {
-    const { w, h } = sizeRef.current;
-    zoomAt(w / 2, h / 2, factor);
+    // Center-anchored: the map point at the frame center stays put, so only
+    // the target zoom changes.
+    targetRef.current.zoom = clamp(targetRef.current.zoom * factor, MIN_ZOOM, MAX_ZOOM);
+    startFollow();
   };
 
   const resetView = () => {
-    viewRef.current = { ...HOME_VIEW };
-    applyViewRef.current();
+    targetRef.current = { ...HOME_VIEW };
+    startFollow();
   };
 
   return (
@@ -342,7 +458,9 @@ export function ListenersMap() {
                 .join(' ');
               return (
                 <button
-                  key={m.id}
+                  // Keyed by timeframe so switching windows remounts the markers
+                  // and replays their staggered pop-in (page entry mounts fresh).
+                  key={`${m.id}-${state.mapTf}`}
                   type="button"
                   className={`listeners-map__marker${selected ? ' is-selected' : ''}`}
                   style={
@@ -350,13 +468,16 @@ export function ListenersMap() {
                       left: `${m.left}%`,
                       top: `${m.top}%`,
                       '--s': `${size}px`,
-                      animationDelay: `${250 + i * 40}ms`,
+                      animationDelay: `${i * 28}ms`,
                     } as React.CSSProperties
                   }
                   aria-label={`${m.name}, ${m.listeners} listeners`}
                   onClick={(e) => {
                     e.stopPropagation();
-                    if (!wasDrag()) update({ region: m.id });
+                    if (!wasDrag()) {
+                      update({ region: m.id });
+                      focusMarket(m);
+                    }
                   }}
                   onMouseEnter={() => update({ hovered: m.id })}
                   onMouseLeave={() => update((s) => (s.hovered === m.id ? { hovered: null } : null))}
