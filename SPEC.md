@@ -129,14 +129,22 @@ chart + revenue donut).
   series data with period labels, average, event markers (title + detail).
 
 ### Revenue donut
-- **Looks:** Card with title/subtitle and an SVG donut; center shows a label + value; a legend
-  lists each platform with color dot, name, %, and amount.
+- **Looks:** Card with title/subtitle top-left and a two-icon view toggle (donut / bars)
+  top-right, styled like the streams card's segmented controls. Two views of the same data:
+  - *Donut (default):* SVG donut; center shows a label + value; a legend lists each platform
+    with color dot, name, %, and amount.
+  - *Bars:* ranked horizontal bars, one per platform (label + % + amount above a bar whose
+    width is relative to the top platform), with a "Total" readout row at the bottom.
 - **States:**
-  - Segment/legend-row *hover*: that segment thickens, others dim; center swaps to the hovered
-    platform's label + amount; a small tooltip appears. Legend row highlights.
-  - *Compact (height < 470px):* legend is hidden, donut only. (The one real responsive rule.)
-- **Content:** "Est. Revenue" + "Last 30 days · by platform"; segments per platform (label,
-  %, amount, color); center total.
+  - Toggle button *active* (gold) vs *inactive* (hover lightens).
+  - Donut — segment/legend-row *hover*: that segment thickens, others dim; center swaps to the
+    hovered platform's label + amount; a small tooltip appears. Legend row highlights.
+  - Bars — row *hover*: other rows dim, hovered bar brightens. Bars grow in left-to-right with
+    a slight stagger when the view is switched to.
+  - *Compact (height < 470px):* donut view hides the legend, donut only. (The one real
+    responsive rule.)
+- **Content:** "Est. Revenue" + "Last 30 days · by platform"; segments/bars per platform
+  (label, %, amount, color); total ($18.1K) in the donut center / bars footer.
 
 ---
 

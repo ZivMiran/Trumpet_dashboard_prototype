@@ -8,8 +8,55 @@
   background: #2c2e31;
 }
 
+/* Head row: title left, view toggle pinned top-right —
+   mirrors the streams card's controls-in-head pattern. */
 .revenue-card__head {
   flex: none;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.revenue-card__head-text {
+  min-width: 0;
+}
+
+.revenue-card__views {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  border: 1px solid #45494f;
+  border-radius: 9px;
+  padding: 3px;
+  background: #16171a;
+}
+
+.revenue-card__view-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #bdbbb1;
+  cursor: pointer;
+  transition: background var(--dur-base) var(--ease-out),
+    color var(--dur-base) var(--ease-out);
+}
+
+.revenue-card__view-btn:hover {
+  color: #f0ede5;
+  background: var(--surface-raised);
+}
+
+.revenue-card__view-btn--active,
+.revenue-card__view-btn--active:hover {
+  background: #e3b53a;
+  color: #1f1804;
 }
 
 .revenue-card__title {
@@ -31,6 +78,7 @@
   align-items: center;
   justify-content: center;
   padding: 18px 8px;
+  animation: fade-soft var(--dur-slow) var(--ease-out);
 }
 
 .revenue-card__donut {
@@ -137,5 +185,107 @@
 
 .revenue-card__legend-amount {
   text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Bars view: ranked horizontal bars, widths relative to the top
+   platform so magnitudes compare directly ─────────────────────── */
+.revenue-card__bars {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 17px;
+  padding: 18px 2px 6px;
+  animation: fade-soft var(--dur-slow) var(--ease-out);
+}
+
+.revenue-card__bar-row {
+  cursor: pointer;
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+
+.revenue-card__bar-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 13px;
+  margin-bottom: 7px;
+}
+
+.revenue-card__bar-label {
+  color: #f0ede5;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.revenue-card__bar-pct {
+  font-size: 12px;
+  color: #8f9299;
+  font-variant-numeric: tabular-nums;
+}
+
+.revenue-card__bar-amount {
+  min-width: 44px;
+  text-align: right;
+  color: #f0ede5;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.revenue-card__bar-track {
+  height: 8px;
+  border-radius: 4px;
+  background: #232529;
+  overflow: hidden;
+}
+
+.revenue-card__bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transform-origin: left;
+  animation: rev-bar-grow 0.5s var(--ease-out) backwards;
+  transition: filter var(--dur-base) var(--ease-out);
+}
+
+.revenue-card__bar-row:hover .revenue-card__bar-fill {
+  filter: brightness(1.15);
+}
+
+@keyframes rev-bar-grow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Total line anchors the ranking back to the whole, echoing the
+   donut's center readout. */
+.revenue-card__bars-total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  border-top: 1px solid #30333a;
+  padding-top: 13px;
+  margin-top: 2px;
+}
+
+.revenue-card__bars-total-label {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: #8f9299;
+  text-transform: uppercase;
+}
+
+.revenue-card__bars-total-value {
+  font-size: 18px;
+  font-weight: 300;
+  color: #f0ede5;
   font-variant-numeric: tabular-nums;
 }

@@ -64,6 +64,7 @@ export interface AppState {
   tipKpi: number | null;
   revHover: number | null;
   revCompact: boolean;
+  revView: 'donut' | 'bars';
   acctOpen: boolean;
   acctId: string;
   activeAccts: string[];
@@ -103,6 +104,7 @@ const initialState: AppState = {
   tipKpi: null,
   revHover: null,
   revCompact: false,
+  revView: 'donut',
   acctOpen: false,
   acctId: 'echo',
   activeAccts: ['echo', 'nova'],
