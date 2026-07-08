@@ -11,8 +11,8 @@
 }
 
 .sidebar--collapsed {
-  width: 72px;
-  padding: 20px 12px;
+  width: 88px;
+  padding: 20px 10px;
 }
 
 .sidebar__brand {
@@ -434,9 +434,9 @@
 }
 
 .sidebar--collapsed .sidebar__brand {
-  flex-direction: column;
-  gap: 14px;
-  padding: 2px 0 26px;
+  gap: 6px;
+  padding: 2px 0 24px;
+  justify-content: center;
 }
 
 .sidebar--collapsed .sidebar__wordmark {
