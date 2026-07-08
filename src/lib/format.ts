@@ -11,6 +11,11 @@ export const fmtK = (n: number): string => (n >= 1000 ? (n / 1000).toFixed(2) + 
 
 export const parsePlays = (p: string): number => parseFloat(p) * (/M/i.test(p) ? 1000 : 1);
 
+export const parseStreams = (s: string): number => {
+  const n = parseFloat(s);
+  return /M/i.test(s) ? n * 1e6 : /K/i.test(s) ? n * 1e3 : n;
+};
+
 export const parseAdds = (v: string): number => {
   const n = parseFloat(v);
   return /k/i.test(v) ? n * 1000 : n;

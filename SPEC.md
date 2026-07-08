@@ -186,16 +186,23 @@ slides in from the right when a track is selected.
 
 ### Track detail drawer
 - **Looks:** Right-side panel over a scrim. Header (label + Close). Body: track identity
-  (icon, title, album·date, status pill); a streams card (total + growth vs prev 28 days); a
-  3-stat row (Save Rate, Playlist Adds, Skip Rate); an "Engagement waveform" with colored
-  skip/save bands, badges, and a time axis; a legend; a "Top markets" bar list. Footer: "Open
-  full report" + "Export".
+  (icon, title, album·date, status pill); a "Performance" section head with a timeframe
+  segmented control (1D/1W/1M/1Y/All, movers-widget style); a streams card ("Streams · [tf
+  phrase]" + growth vs prior period); a 3-stat row (Save Rate, Saves, Skip Rate); an
+  "Engagement waveform" with colored skip/save bands, badges, and a time axis (0:00–3:45);
+  a legend; a "Top markets" bar list. Footer: "Compare" (primary width) + "Export".
 - **States:** Open when a track (row or sub-track) is selected; closes via scrim or Close.
-  Growth value colored by sign. Waveform is deterministically generated per track (skip
-  clusters red, save clusters green, plays grey). Footer buttons are decorative.
-- **Content:** Track identity + status; total streams + growth; save rate / playlist adds /
+  Timeframe tab *active* (gold); switching rescales streams and saves, and growth reads
+  "lifetime" (grey) on All. Growth value colored by sign. Waveform is deterministically
+  generated per track (skip clusters red, save clusters green, streams grey); bars stagger
+  in on open and brighten on hover; hovering the wave shows a hairline time cursor with a
+  timestamp; hovering a skip/save cluster highlights its band, dims the rest, and reveals a
+  "Hear this part" chip; clicking plays a 3-second snippet *animation* (gold playhead sweeps
+  the cluster, its bars pulse like an equalizer, chip reads "Playing snippet…") — no real
+  audio, prototype only. Export is decorative.
+- **Content:** Track identity + status; streams + growth per timeframe; save rate / saves /
   skip rate; waveform (skip band labeled "[skip] skipped here", save band "Chorus · [rate]
-  saved"); legend (skip / save / plays); top markets (track market 42%, Germany 26%, UK 18%).
+  saved"); legend (skip / save / streams); top markets (track market 42%, Germany 26%, UK 18%).
 
 ---
 

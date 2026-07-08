@@ -44,6 +44,7 @@ export interface AppState {
   dir: 1 | -1;
   fmt: string;
   moverTf: Timeframe;
+  drawerTf: Timeframe;
   expanded: Record<number, boolean>;
   region: string | null;
   continent: string;
@@ -84,6 +85,7 @@ const initialState: AppState = {
   dir: 1,
   fmt: 'All',
   moverTf: '1M',
+  drawerTf: '1M',
   expanded: {},
   region: null,
   continent: 'World',
