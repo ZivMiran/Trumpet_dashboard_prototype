@@ -2,12 +2,14 @@ import { useApp } from '../../context/AppContext';
 import { seedOf, platSplit } from '../../lib/seed';
 import { parsePlays, fmtK } from '../../lib/format';
 import { scopeNameFor, detailScopeLabelFor } from '../../lib/audience';
+import { useOverlayExit } from '../../lib/useOverlayExit';
 import './TrackDetailModal.css';
 
 export function TrackDetailModal() {
   const { state, update } = useApp();
-  const td = state.trkDetail;
-  if (!td) return null;
+  // Latched so the modal keeps its content while animating out.
+  const { mounted, closing, latched: td } = useOverlayExit(state.trkDetail);
+  if (!mounted || !td) return null;
   const close = () => update({ trkDetail: null });
 
   const scope = scopeNameFor(state.region);
@@ -22,8 +24,8 @@ export function TrackDetailModal() {
   ];
 
   return (
-    <div className="track-modal__scrim" onClick={close}>
-      <div className="track-modal" onClick={(e) => e.stopPropagation()}>
+    <div className={`track-modal__scrim${closing ? ' track-modal__scrim--closing' : ''}`} onClick={close}>
+      <div className={`track-modal${closing ? ' track-modal--closing' : ''}`} onClick={(e) => e.stopPropagation()}>
         <div className="track-modal__head">
           <div style={{ minWidth: 0 }}>
             <div className="track-modal__kicker">Track · #{td.rank}</div>

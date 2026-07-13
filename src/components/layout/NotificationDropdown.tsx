@@ -1,11 +1,14 @@
 import { useApp } from '../../context/AppContext';
 import { notifications } from '../../data/notifications';
 import { NoteIcon } from '../icons';
+import { useOverlayExit } from '../../lib/useOverlayExit';
 import './NotificationDropdown.css';
 
 export function NotificationDropdown() {
   const { state, update } = useApp();
   const { readAll } = state;
+  const { mounted, closing } = useOverlayExit(state.notifOpen || null);
+  if (!mounted) return null;
 
   const allNotifs = notifications.map((n) => {
     const unread = n.unread && !readAll;
@@ -20,8 +23,8 @@ export function NotificationDropdown() {
 
   return (
     <>
-      <div className="notif-scrim" onClick={closeNotif} />
-      <div className="notif-dropdown">
+      <div className={`notif-scrim${closing ? ' notif-scrim--closing' : ''}`} onClick={closeNotif} />
+      <div className={`notif-dropdown${closing ? ' notif-dropdown--closing' : ''}`}>
         <div className="notif-dropdown__header">
           <div className="notif-dropdown__title">Notifications</div>
           {hasUnread && <div className="notif-pill">{unreadCount} new</div>}

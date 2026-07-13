@@ -23,6 +23,17 @@
   animation: drawer-in var(--dur-slow) var(--ease-out);
 }
 
+/* Exit — plays while useOverlayExit holds the drawer mounted. */
+.album-drawer__scrim--closing {
+  animation: scrim-out var(--dur-base) var(--ease-out) forwards;
+  pointer-events: none;
+}
+
+.album-drawer--closing {
+  animation: drawer-out var(--dur-base) var(--ease-out) forwards;
+  pointer-events: none;
+}
+
 .album-drawer__head {
   flex: none;
   display: flex;

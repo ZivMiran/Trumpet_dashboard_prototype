@@ -3,13 +3,15 @@ import { catalog, collections } from '../../data/catalog';
 import { parsePlays, growthColor } from '../../lib/format';
 import { typeOf } from '../../lib/music';
 import { asset } from '../../lib/assets';
+import { useOverlayExit } from '../../lib/useOverlayExit';
 import { NoteIcon, CloseIcon, DownloadIcon, CompareIcon } from '../icons';
 import './AlbumBreakdownDrawer.css';
 
 export function AlbumBreakdownDrawer() {
   const { state, update } = useApp();
-  const { albumSel } = state;
-  if (albumSel == null) return null;
+  // Latched so the drawer keeps its content while animating out.
+  const { mounted, closing, latched: albumSel } = useOverlayExit(state.albumSel);
+  if (!mounted || albumSel == null) return null;
 
   const r = catalog[albumSel];
   if (!r || !r.coll) return null;
@@ -42,8 +44,8 @@ export function AlbumBreakdownDrawer() {
 
   return (
     <>
-      <div className="album-drawer__scrim" onClick={close} />
-      <aside className="album-drawer">
+      <div className={`album-drawer__scrim${closing ? ' album-drawer__scrim--closing' : ''}`} onClick={close} />
+      <aside className={`album-drawer${closing ? ' album-drawer--closing' : ''}`}>
         <div className="album-drawer__head">
           <span className="album-drawer__head-label">{kind} Breakdown</span>
           <button type="button" className="album-drawer__close" onClick={close}>

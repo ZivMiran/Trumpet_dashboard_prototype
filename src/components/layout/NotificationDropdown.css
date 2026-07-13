@@ -22,6 +22,16 @@
   animation: pop-in var(--dur-base) var(--ease-out);
 }
 
+/* Exit — plays while useOverlayExit holds the dropdown mounted. */
+.notif-scrim--closing {
+  pointer-events: none;
+}
+
+.notif-dropdown--closing {
+  animation: pop-out var(--dur-fast) var(--ease-out) forwards;
+  pointer-events: none;
+}
+
 .notif-dropdown__header {
   flex: none;
   display: flex;

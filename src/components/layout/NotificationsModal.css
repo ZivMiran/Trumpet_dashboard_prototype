@@ -4,6 +4,13 @@
   background: var(--scrim);
   backdrop-filter: var(--blur);
   z-index: 55;
+  animation: scrim-in var(--dur-base) var(--ease-out);
+}
+
+/* Exit — plays while useOverlayExit holds the modal mounted. */
+.modal-scrim--closing {
+  animation: scrim-out var(--dur-base) var(--ease-out) forwards;
+  pointer-events: none;
 }
 
 .notif-modal {
@@ -25,6 +32,12 @@
   overflow: hidden;
   /* Opacity-only entrance — the centering translate(-50%,-50%) must not be animated. */
   animation: fade-soft var(--dur-slow) var(--ease-out);
+}
+
+/* Opacity-only exit for the same reason. */
+.notif-modal--closing {
+  animation: scrim-out var(--dur-base) var(--ease-out) forwards;
+  pointer-events: none;
 }
 
 .notif-modal__header {

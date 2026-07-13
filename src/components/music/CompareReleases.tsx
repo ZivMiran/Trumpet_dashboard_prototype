@@ -17,6 +17,7 @@ import {
 } from '../../lib/compare';
 import { CloseIcon, ChevronDownIcon, CompareIcon, SearchIcon, CheckIcon } from '../icons';
 import { asset } from '../../lib/assets';
+import { useOverlayExit } from '../../lib/useOverlayExit';
 import './CompareReleases.css';
 
 const COLOR_A = '#e3b53a';
@@ -88,14 +89,17 @@ function TrackPickerMenu({
 
 export function CompareReleases() {
   const { state, update } = useApp();
-  const ids = state.compare;
   const [win, setWin] = useState<CompareWindow>('1W');
   const [metric, setMetric] = useState<CompareMetric>('streams');
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
   const [picker, setPicker] = useState<null | 'A' | 'B'>(null);
   const [metricOpen, setMetricOpen] = useState(false);
+  // Latched so the modal keeps its content while animating out.
+  const { mounted, closing, latched: ids } = useOverlayExit(
+    state.compare && state.compare.length > 0 ? state.compare : null,
+  );
 
-  if (!ids || ids.length === 0) return null;
+  if (!mounted || !ids || ids.length === 0) return null;
 
   const aIdx = ids[0];
   const bIdx = ids[1] ?? -1;
@@ -157,9 +161,13 @@ export function CompareReleases() {
 
   return (
     <>
-      <div className="compare__scrim" onClick={close} />
+      <div className={`compare__scrim${closing ? ' compare__scrim--closing' : ''}`} onClick={close} />
       <div className="compare__center">
-        <div className="compare__modal" role="dialog" aria-label="Compare releases">
+        <div
+          className={`compare__modal${closing ? ' compare__modal--closing' : ''}`}
+          role="dialog"
+          aria-label="Compare releases"
+        >
         <div className="compare__head">
           <div className="compare__head-icon"><CompareIcon size={17} /></div>
           <div className="compare__head-text">

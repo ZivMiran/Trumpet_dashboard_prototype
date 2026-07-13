@@ -1,6 +1,7 @@
 import { useApp } from '../../context/AppContext';
 import { notifications } from '../../data/notifications';
 import { SearchIcon, CloseIcon, NoteIcon } from '../icons';
+import { useOverlayExit } from '../../lib/useOverlayExit';
 import './NotificationsModal.css';
 
 const winFilterKeys = ['All', 'Insights', 'Milestones', 'Account'] as const;
@@ -8,6 +9,8 @@ const winFilterKeys = ['All', 'Insights', 'Milestones', 'Account'] as const;
 export function NotificationsModal() {
   const { state, update } = useApp();
   const { readAll, winFilter, notifQuery } = state;
+  const { mounted, closing } = useOverlayExit(state.winOpen || null);
+  if (!mounted) return null;
 
   const allNotifs = notifications.map((n) => {
     const unread = n.unread && !readAll;
@@ -26,8 +29,8 @@ export function NotificationsModal() {
 
   return (
     <>
-      <div className="modal-scrim" onClick={closeWindow} />
-      <div className="notif-modal">
+      <div className={`modal-scrim${closing ? ' modal-scrim--closing' : ''}`} onClick={closeWindow} />
+      <div className={`notif-modal${closing ? ' notif-modal--closing' : ''}`}>
         <div className="notif-modal__header">
           <div className="notif-modal__title">All notifications</div>
           <div className="notif-modal__count">{allNotifs.length}</div>

@@ -2,12 +2,14 @@ import { useApp } from '../../context/AppContext';
 import { seedOf, platSplit } from '../../lib/seed';
 import { parsePlays, fmtK } from '../../lib/format';
 import { nameOf, trkArrFor } from '../../lib/audience';
+import { useOverlayExit } from '../../lib/useOverlayExit';
 import './CityDetailModal.css';
 
 export function CityDetailModal() {
   const { state, update } = useApp();
-  const cd = state.cityDetail;
-  if (!cd) return null;
+  // Latched so the modal keeps its content while animating out.
+  const { mounted, closing, latched: cd } = useOverlayExit(state.cityDetail);
+  if (!mounted || !cd) return null;
   const close = () => update({ cityDetail: null });
 
   const rid = state.region;
@@ -25,8 +27,8 @@ export function CityDetailModal() {
     }));
 
   return (
-    <div className="city-modal__scrim" onClick={close}>
-      <div className="city-modal" onClick={(e) => e.stopPropagation()}>
+    <div className={`city-modal__scrim${closing ? ' city-modal__scrim--closing' : ''}`} onClick={close}>
+      <div className={`city-modal${closing ? ' city-modal--closing' : ''}`} onClick={(e) => e.stopPropagation()}>
         <div className="city-modal__head">
           <div style={{ minWidth: 0 }}>
             <div className="city-modal__kicker">City · #{cd.rank}</div>

@@ -3,6 +3,7 @@ import { useApp, type DrillTrack } from '../../context/AppContext';
 import { catalog, tfDefs } from '../../data/catalog';
 import { tfVs } from '../../data/overview';
 import { makeWrand } from '../../lib/seed';
+import { useOverlayExit } from '../../lib/useOverlayExit';
 import { fmtAxis, fmtStreams, growthColor, parseAdds, parseStreams } from '../../lib/format';
 import { asset, coverFor } from '../../lib/assets';
 import { CompareIcon } from '../icons';
@@ -20,7 +21,11 @@ const fmtTime = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60
 
 export function TrackDetailDrawer() {
   const { state, update } = useApp();
-  const { sel, selTrack } = state;
+  // Latched so the drawer keeps its content while animating out.
+  const { mounted, closing, latched } = useOverlayExit(
+    state.sel != null || state.selTrack != null ? { sel: state.sel, selTrack: state.selTrack } : null,
+  );
+  const { sel, selTrack } = latched ?? { sel: null, selTrack: null };
   const [waveHover, setWaveHover] = useState<{ t: number; clump: number | null } | null>(null);
   const [playing, setPlaying] = useState<number | null>(null);
   const playTimer = useRef<number | null>(null);
@@ -41,8 +46,7 @@ export function TrackDetailDrawer() {
     if (playTimer.current) window.clearTimeout(playTimer.current);
   }, []);
 
-  const hasSel = sel != null || selTrack != null;
-  if (!hasSel) return null;
+  if (!mounted || latched == null) return null;
 
   const cur: DrillTrack | CatalogTrack = selTrack ?? catalog[sel!];
   // A selected release carries its own cover; a collection sub-track borrows its
@@ -130,8 +134,8 @@ export function TrackDetailDrawer() {
 
   return (
     <>
-      <div className="track-drawer__scrim" onClick={close} />
-      <aside className="track-drawer">
+      <div className={`track-drawer__scrim${closing ? ' track-drawer__scrim--closing' : ''}`} onClick={close} />
+      <aside className={`track-drawer${closing ? ' track-drawer--closing' : ''}`}>
         <div className="track-drawer__head">
           <span className="track-drawer__head-label">Track Detail</span>
           <button type="button" className="track-drawer__close" onClick={close}>

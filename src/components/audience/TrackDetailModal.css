@@ -23,6 +23,16 @@
   animation: modal-in var(--dur-slow) var(--ease-out);
 }
 
+/* Exit — plays while useOverlayExit holds the modal mounted. */
+.track-modal__scrim--closing {
+  animation: scrim-out var(--dur-base) var(--ease-out) forwards;
+  pointer-events: none;
+}
+
+.track-modal--closing {
+  animation: modal-out var(--dur-base) var(--ease-out) forwards;
+}
+
 .track-modal__head {
   flex: none;
   display: flex;

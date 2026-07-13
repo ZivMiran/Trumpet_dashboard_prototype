@@ -197,6 +197,26 @@ textarea:focus-visible {
   to { opacity: 1; }
 }
 
+/* Exit counterparts — a notch faster than the entrances. They run with
+   `forwards` fill while lib/useOverlayExit holds the overlay mounted,
+   so the hidden end state persists until the delayed unmount. scrim-out
+   doubles as the opacity-only exit for transform-centered panels. */
+@keyframes scrim-out {
+  to { opacity: 0; }
+}
+
+@keyframes drawer-out {
+  to { transform: translateX(24px); opacity: 0; }
+}
+
+@keyframes modal-out {
+  to { transform: translateY(8px) scale(0.97); opacity: 0; }
+}
+
+@keyframes pop-out {
+  to { transform: translateY(-4px) scale(0.97); opacity: 0; }
+}
+
 /* The page root fades whenever a new screen mounts. */
 .overview-page,
 .music-page,

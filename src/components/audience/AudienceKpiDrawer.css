@@ -23,6 +23,17 @@
   animation: drawer-in var(--dur-slow) var(--ease-out);
 }
 
+/* Exit — plays while useOverlayExit holds the drawer mounted. */
+.audience-kpi-drawer__scrim--closing {
+  animation: scrim-out var(--dur-base) var(--ease-out) forwards;
+  pointer-events: none;
+}
+
+.audience-kpi-drawer--closing {
+  animation: drawer-out var(--dur-base) var(--ease-out) forwards;
+  pointer-events: none;
+}
+
 .audience-kpi-drawer__head {
   flex: none;
   display: flex;

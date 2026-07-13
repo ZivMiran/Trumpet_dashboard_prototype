@@ -1,17 +1,20 @@
 import { useApp } from '../../context/AppContext';
 import { audKpiData } from '../../data/audience';
+import { useOverlayExit } from '../../lib/useOverlayExit';
 import './AudienceKpiDrawer.css';
 
 export function AudienceKpiDrawer() {
   const { state, update } = useApp();
-  if (state.audKpi == null) return null;
-  const k = audKpiData[state.audKpi];
+  // Latched so the drawer keeps its content while animating out.
+  const { mounted, closing, latched } = useOverlayExit(state.audKpi);
+  if (!mounted || latched == null) return null;
+  const k = audKpiData[latched];
   const close = () => update({ audKpi: null });
 
   return (
     <>
-      <div className="audience-kpi-drawer__scrim" onClick={close}></div>
-      <aside className="audience-kpi-drawer">
+      <div className={`audience-kpi-drawer__scrim${closing ? ' audience-kpi-drawer__scrim--closing' : ''}`} onClick={close}></div>
+      <aside className={`audience-kpi-drawer${closing ? ' audience-kpi-drawer--closing' : ''}`}>
         <div className="audience-kpi-drawer__head">
           <span className="audience-kpi-drawer__head-label">Audience Metric</span>
           <button type="button" className="audience-kpi-drawer__close" onClick={close}>
