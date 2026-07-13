@@ -14,3 +14,21 @@
   display: flex;
   gap: 16px;
 }
+
+/* ── Entrance choreography — widgets surface top-to-bottom:
+   pulse card, then the KPI cards ripple left-to-right, then the
+   two charts. Keyframe + fill convention live in index.css. ── */
+.overview-page .pulse-card,
+.overview-page .kpi-card,
+.overview-page .streams-card,
+.overview-page .revenue-card {
+  animation: widget-in 0.5s var(--ease-out) backwards;
+}
+
+.overview-page .kpi-card:nth-child(1) { animation-delay: 70ms; }
+.overview-page .kpi-card:nth-child(2) { animation-delay: 110ms; }
+.overview-page .kpi-card:nth-child(3) { animation-delay: 150ms; }
+.overview-page .kpi-card:nth-child(4) { animation-delay: 190ms; }
+.overview-page .kpi-card:nth-child(5) { animation-delay: 230ms; }
+.overview-page .streams-card { animation-delay: 200ms; }
+.overview-page .revenue-card { animation-delay: 270ms; }

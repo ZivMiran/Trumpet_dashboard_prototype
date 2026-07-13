@@ -56,7 +56,7 @@ export function MoversWidget() {
         </div>
       </div>
       <div className="movers-widget__grid">
-        {movers.map((m) => (
+        {movers.map((m, idx) => (
           <div
             key={m.i}
             className={`movers-widget__card ${m.selected ? 'movers-widget__card--selected' : ''}`}
@@ -81,7 +81,18 @@ export function MoversWidget() {
             </div>
             <div className="movers-widget__card-bottom">
               <svg viewBox="0 0 70 22" preserveAspectRatio="none" className="movers-widget__spark">
-                <polyline points={m.spark} fill="none" stroke="#e3b53a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                {/* Keyed by timeframe so the line redraws on every tab switch. */}
+                <polyline
+                  key={moverTf}
+                  points={m.spark}
+                  pathLength={1}
+                  style={{ animationDelay: `${idx * 60}ms` }}
+                  fill="none"
+                  stroke="#e3b53a"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
               <span className="movers-widget__card-streams">{m.streams}</span>
             </div>

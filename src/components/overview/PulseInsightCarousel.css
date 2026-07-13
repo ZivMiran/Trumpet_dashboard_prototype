@@ -116,7 +116,8 @@
   height: 8px;
   border-radius: 5px;
   cursor: pointer;
-  transition: width 0.25s ease, background 0.25s ease;
+  transition: width var(--dur-slow) var(--ease-out),
+    background var(--dur-slow) var(--ease-out);
 }
 
 /* Invisible halo so the 8px dots have a comfortable click target. */

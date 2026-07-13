@@ -31,3 +31,21 @@
   gap: 16px;
   min-height: 0;
 }
+
+/* ── Entrance choreography — KPI cards ripple left-to-right, then the
+   map, then the side bentos top-to-bottom. The gender-split bar segments
+   continue the sequence (see GenderSplitBento.css, keyed off the 260ms
+   entrance here). Keyframe + fill convention live in index.css. ── */
+.audience-page .audience-kpi-ribbon__card,
+.audience-page .listeners-map,
+.audience-page .audience-sources,
+.audience-page .gender-split {
+  animation: widget-in 0.5s var(--ease-out) backwards;
+}
+
+.audience-page .audience-kpi-ribbon__card:nth-child(2) { animation-delay: 45ms; }
+.audience-page .audience-kpi-ribbon__card:nth-child(3) { animation-delay: 90ms; }
+.audience-page .audience-kpi-ribbon__card:nth-child(4) { animation-delay: 135ms; }
+.audience-page .listeners-map { animation-delay: 120ms; }
+.audience-page .audience-sources { animation-delay: 200ms; }
+.audience-page .gender-split { animation-delay: 260ms; }

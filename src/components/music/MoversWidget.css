@@ -83,6 +83,10 @@
   transform: translateY(-2px);
 }
 
+.movers-widget__card:active {
+  transform: translateY(0);
+}
+
 .movers-widget__card--selected {
   border-color: #e3b53a;
 }
@@ -161,6 +165,13 @@
 .movers-widget__spark {
   width: 64px;
   height: 20px;
+}
+
+/* Sparkline redraws whenever the timeframe tab changes (polyline keyed
+   by tf in the TSX); cards ripple via inline animation-delay. */
+.movers-widget__spark polyline {
+  stroke-dasharray: 1;
+  animation: draw-in 0.7s var(--ease-out) backwards;
 }
 
 .movers-widget__card-streams {

@@ -32,7 +32,8 @@ export function Header() {
 
   return (
     <header className="header">
-      <div className="header__title-block">
+      {/* Keyed by page so the title settles in on every navigation. */}
+      <div className="header__title-block" key={page}>
         <div className="header__title">{pageTitle}</div>
         <div className="header__subtitle">{pageSubtitle}</div>
       </div>

@@ -76,7 +76,16 @@
   gap: 11px;
   padding: 14px 17px;
   border-bottom: 1px solid #26282d;
+  /* Rows ripple in just behind the panel's pop-in. */
+  animation: fade-in var(--dur-slow) var(--ease-out) backwards;
 }
+
+.notif-row:nth-child(2) { animation-delay: 30ms; }
+.notif-row:nth-child(3) { animation-delay: 60ms; }
+.notif-row:nth-child(4) { animation-delay: 90ms; }
+.notif-row:nth-child(5) { animation-delay: 120ms; }
+.notif-row:nth-child(6) { animation-delay: 150ms; }
+.notif-row:nth-child(n + 7) { animation-delay: 180ms; }
 
 .notif-row__icon {
   flex: none;

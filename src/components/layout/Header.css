@@ -10,6 +10,8 @@
 .header__title-block {
   flex: 1 1 0;
   min-width: 0;
+  /* Remounted per page (keyed) so the title settles in on navigation. */
+  animation: fade-in var(--dur-slow) var(--ease-out);
 }
 
 .header__title {
@@ -214,6 +216,8 @@
   border-radius: 50%;
   background: var(--accent);
   border: 1.5px solid var(--bg);
+  /* Gentle unread pulse — calm attention, not an alarm. */
+  animation: pulse-dot 2.4s var(--ease-in-out) infinite;
 }
 
 .export-btn {

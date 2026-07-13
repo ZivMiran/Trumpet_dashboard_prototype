@@ -44,12 +44,17 @@
   border: 1px solid #45494f;
   border-radius: 7px;
   padding: 6px 10px;
-  transition: background 0.15s ease, color 0.15s ease;
+  transition: background var(--dur-base) var(--ease-out),
+    color var(--dur-base) var(--ease-out);
 }
 
 .audience-sources__reset:hover {
   background: #33363b;
   color: #f0ede5;
+}
+
+.audience-sources__reset:active {
+  background: var(--surface-inset);
 }
 
 .audience-sources__body {

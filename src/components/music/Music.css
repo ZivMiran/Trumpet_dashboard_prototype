@@ -16,3 +16,12 @@
   gap: 16px;
   overflow: hidden;
 }
+
+/* ── Entrance choreography — movers first, catalog follows.
+   Keyframe + fill convention live in index.css. ── */
+.music-page .movers-widget,
+.music-page .catalog-table {
+  animation: widget-in 0.5s var(--ease-out) backwards;
+}
+
+.music-page .catalog-table { animation-delay: 120ms; }

@@ -104,6 +104,7 @@ textarea:focus-visible {
   *::before,
   *::after {
     animation-duration: 0.001ms !important;
+    animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
   }
@@ -143,15 +144,25 @@ textarea:focus-visible {
    Quick, ease-out, never bouncy (per DESIGN.md). All are disabled under
    prefers-reduced-motion by the global rule above. */
 
-/* Page content settles in on route change. */
+/* Page root fades on route change — opacity only, since the widgets
+   inside carry the lift via the staggered widget-in reveal below. */
 @keyframes page-in {
   from {
     opacity: 0;
-    transform: translateY(6px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+  }
+}
+
+/* Widgets surface one after another as a screen mounts. Each page's CSS
+   assigns the stagger delays. Only a `from` state + `backwards` fill:
+   hidden through the delay, then the animation releases the transform
+   back to CSS so hover lifts keep working after the entrance. */
+@keyframes widget-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
   }
 }
 
@@ -186,10 +197,16 @@ textarea:focus-visible {
   to { opacity: 1; }
 }
 
-/* The page root fades+lifts whenever a new screen mounts. */
+/* The page root fades whenever a new screen mounts. */
 .overview-page,
 .music-page,
 .audience-page,
 .settings-page {
   animation: page-in var(--dur-slow) var(--ease-out);
+}
+
+/* The whole shell settles in once on load/refresh, underneath the
+   per-widget choreography. */
+.app-shell {
+  animation: fade-soft 0.35s var(--ease-out);
 }

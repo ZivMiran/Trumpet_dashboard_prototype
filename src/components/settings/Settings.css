@@ -30,6 +30,10 @@
   color: #f0ede5;
 }
 
+.settings-page__nav-item:active {
+  background: var(--surface-inset);
+}
+
 .settings-page__nav-item--active,
 .settings-page__nav-item--active:hover {
   background: rgba(227, 181, 58, 0.12);
@@ -200,10 +204,23 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  cursor: pointer;
+  transition: border-color var(--dur-base) var(--ease-out),
+    background var(--dur-base) var(--ease-out);
+}
+
+.settings-profile__field--select:hover {
+  border-color: #54585f;
+  background: #22242a;
 }
 
 .settings-profile__caret {
   color: #8f9299;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.settings-profile__field--select:hover .settings-profile__caret {
+  transform: translateY(1px);
 }
 
 /* Preferences */
@@ -274,6 +291,15 @@
   background: #16171a;
 }
 
+/* Knob squashes slightly while held, in whichever position it sits. */
+.settings-toggle:active .settings-toggle__knob {
+  transform: scale(0.88);
+}
+
+.settings-toggle--on:active .settings-toggle__knob {
+  transform: translateX(18px) scale(0.88);
+}
+
 /* Connected platforms */
 .settings-platforms__head {
   display: flex;
@@ -301,6 +327,13 @@
   border-radius: 11px;
   padding: 13px 14px;
   background: #1d1f23;
+  transition: border-color var(--dur-base) var(--ease-out),
+    background var(--dur-base) var(--ease-out);
+}
+
+.settings-platform:hover {
+  border-color: #3a3d42;
+  background: #202329;
 }
 
 .settings-platform__icon {
@@ -372,3 +405,14 @@
 .settings-platform__connect:active {
   background: rgba(227, 181, 58, 0.18);
 }
+
+/* ── Entrance choreography — nav first, then the cards top-to-bottom.
+   Keyframe + fill convention live in index.css. ── */
+.settings-page__nav,
+.settings-page .settings-card {
+  animation: widget-in 0.5s var(--ease-out) backwards;
+}
+
+.settings-page__top-grid > .settings-card:nth-child(1) { animation-delay: 60ms; }
+.settings-page__top-grid > .settings-card:nth-child(2) { animation-delay: 130ms; }
+.settings-page__content > .settings-card { animation-delay: 200ms; }
