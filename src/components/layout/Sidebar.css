@@ -20,6 +20,8 @@
   align-items: center;
   gap: 11px;
   padding: 2px 4px 26px;
+  transition: gap var(--dur-slow) var(--ease-in-out),
+    padding var(--dur-slow) var(--ease-in-out);
 }
 
 .sidebar__collapse {
@@ -69,18 +71,34 @@
   letter-spacing: -0.015em;
   color: var(--text);
   line-height: 1;
+  max-width: 120px;
+  overflow: hidden;
+  white-space: nowrap;
+  /* Fades in late so the width glide leads and the text follows. */
+  transition: max-width var(--dur-slow) var(--ease-in-out),
+    opacity var(--dur-base) var(--ease-out) 0.1s;
 }
 
+/* Fixed height/line-height so the label can morph into the collapsed
+   1px divider on the same clock as the width — no reflow snap. */
 .sidebar__section-label {
   font-size: 11px;
   letter-spacing: var(--ls-caps);
   color: #71757d;
-  padding: 0 8px 9px;
+  height: 17px;
+  line-height: 17px;
+  margin: 0 8px 9px;
+  overflow: hidden;
+  white-space: nowrap;
   text-transform: uppercase;
+  background: transparent;
+  transition: height var(--dur-slow) var(--ease-in-out),
+    color var(--dur-base) var(--ease-in),
+    background var(--dur-base) var(--ease-out);
 }
 
 .sidebar__section-label--account {
-  padding: 24px 8px 9px;
+  margin-top: 24px;
 }
 
 .sidebar__nav {
@@ -103,7 +121,9 @@
   text-align: left;
   font-family: inherit;
   transition: background var(--dur-base) var(--ease-out),
-    color var(--dur-base) var(--ease-out);
+    color var(--dur-base) var(--ease-out),
+    gap var(--dur-slow) var(--ease-in-out),
+    padding var(--dur-slow) var(--ease-in-out);
 }
 
 .nav-item svg {
@@ -353,8 +373,11 @@
   width: 100%;
   text-align: left;
   font-family: inherit;
+  overflow: hidden;
   transition: background var(--dur-base) var(--ease-out),
-    border-color var(--dur-base) var(--ease-out);
+    border-color var(--dur-base) var(--ease-out),
+    gap var(--dur-slow) var(--ease-in-out),
+    padding var(--dur-slow) var(--ease-in-out);
 }
 
 .acct-trigger:hover {
@@ -367,7 +390,13 @@
 }
 
 .acct-trigger__chevron {
-  transition: transform var(--dur-base) var(--ease-out);
+  display: flex;
+  align-items: center;
+  width: 16px;
+  overflow: hidden;
+  transition: transform var(--dur-base) var(--ease-out),
+    width var(--dur-slow) var(--ease-in-out),
+    opacity var(--dur-base) var(--ease-out) 0.1s;
 }
 
 .acct-trigger--open .acct-trigger__chevron {
@@ -390,7 +419,11 @@
 
 .acct-trigger__body {
   min-width: 0;
-  flex: 1;
+  flex: 1 1 0%;
+  overflow: hidden;
+  /* Fades in late so the width glide leads and the text follows. */
+  transition: flex-grow var(--dur-slow) var(--ease-in-out),
+    opacity var(--dur-base) var(--ease-out) 0.1s;
 }
 
 .acct-trigger__name {
@@ -437,63 +470,77 @@
   100% { box-shadow: 0 0 0 0 rgba(69, 192, 138, 0); }
 }
 
-/* ── Collapsed state ─────────────────────────────────────── */
+/* ── Collapsed state ──────────────────────────────────────────
+   Everything glides on the width's clock (--dur-slow --ease-in-out):
+   text tracks collapse via max-width/flex-grow, icons slide to center
+   via animated padding — no display/justify-content snaps. Text fades
+   out fast on collapse; the base rules delay the fade-in on expand so
+   labels return once the width glide is underway. */
 .nav-item__label {
   white-space: nowrap;
   overflow: hidden;
+  max-width: 140px;
+  /* Fades in late so the width glide leads and the text follows. */
+  transition: max-width var(--dur-slow) var(--ease-in-out),
+    opacity var(--dur-base) var(--ease-out) 0.1s;
 }
 
 .sidebar--collapsed .sidebar__brand {
-  gap: 6px;
-  padding: 2px 0 24px;
-  justify-content: center;
+  gap: 0;
+  padding: 2px 0 26px;
 }
 
 .sidebar--collapsed .sidebar__wordmark {
-  display: none;
-}
-
-.sidebar--collapsed .sidebar__collapse {
-  margin-left: 0;
+  max-width: 0;
+  opacity: 0;
+  transition: max-width var(--dur-slow) var(--ease-in-out),
+    opacity var(--dur-fast) var(--ease-in);
 }
 
 .sidebar--collapsed .sidebar__section-label {
   height: 1px;
-  padding: 0;
-  margin: 0 8px 9px;
-  overflow: hidden;
   color: transparent;
   background: var(--border-subtle);
 }
 
-.sidebar--collapsed .sidebar__section-label--account {
-  margin-top: 24px;
-}
-
+/* Icon lands at the collapsed rail's center: 10px sidebar padding +
+   25.5px = (88 - 17px icon) / 2. */
 .sidebar--collapsed .nav-item {
-  justify-content: center;
   gap: 0;
-  padding: 9px 0;
+  padding: 9px 0 9px 25.5px;
 }
 
 .sidebar--collapsed .nav-item__label {
-  width: 0;
+  max-width: 0;
   opacity: 0;
+  transition: max-width var(--dur-slow) var(--ease-in-out),
+    opacity var(--dur-fast) var(--ease-in);
 }
 
 .sidebar--collapsed .nav-item--inactive:hover svg {
   transform: none;
 }
 
+/* 14px centers the 38px avatar in the 66px content box (68px rail
+   minus the 1px borders). */
 .sidebar--collapsed .acct-trigger {
-  justify-content: center;
-  padding: 10px 0;
   gap: 0;
+  padding: 10px 14px;
 }
 
-.sidebar--collapsed .acct-trigger__body,
+.sidebar--collapsed .acct-trigger__body {
+  flex-grow: 0;
+  opacity: 0;
+  transition: flex-grow var(--dur-slow) var(--ease-in-out),
+    opacity var(--dur-fast) var(--ease-in);
+}
+
 .sidebar--collapsed .acct-trigger__chevron {
-  display: none;
+  width: 0;
+  opacity: 0;
+  transition: transform var(--dur-base) var(--ease-out),
+    width var(--dur-slow) var(--ease-in-out),
+    opacity var(--dur-fast) var(--ease-in);
 }
 
 .sidebar--collapsed .acct-popover {
