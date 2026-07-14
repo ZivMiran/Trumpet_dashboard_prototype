@@ -211,7 +211,8 @@ Hover lightens the surface or accent; press deepens it.
 | `--dur-fast`    | 0.10s                              | snappy feedback|
 | `--dur-base`    | 0.15s                              | default        |
 | `--dur-slow`    | 0.25s                              | larger moves   |
-| `--ease-out`    | cubic-bezier(0.22, 1, 0.36, 1)     | default easing |
+| `--ease-out`    | cubic-bezier(0.22, 1, 0.36, 1)     | default easing (entrances) |
+| `--ease-in`     | cubic-bezier(0.4, 0, 1, 1)         | exits — accelerate away |
 | `--ease-in-out` | cubic-bezier(0.65, 0, 0.35, 1)     | symmetric moves|
 | `--transition`  | 0.15s cubic-bezier(0.22,1,0.36,1)  | shorthand      |
 

@@ -84,6 +84,11 @@
   animation: fade-soft var(--dur-fast) var(--ease-out);
 }
 
+/* Opacity-only exit — the translateX(-50%) centering must not animate. */
+.streams-card__seg-tooltip--closing {
+  animation: scrim-out var(--dur-fast) var(--ease-in) forwards;
+}
+
 /* ── Hero stat ───────────────────────────────────────────── */
 .streams-card__value-row {
   flex: none;

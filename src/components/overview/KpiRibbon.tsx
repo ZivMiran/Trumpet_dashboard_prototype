@@ -1,5 +1,6 @@
 import { useApp } from '../../context/AppContext';
 import { kpiData } from '../../data/overview';
+import { useOverlayExit } from '../../lib/useOverlayExit';
 import './KpiRibbon.css';
 
 // Per-KPI glyphs. Paths follow the same stroke language as the app shell icons
@@ -44,6 +45,8 @@ const kpiIcons: Record<string, React.ReactNode> = {
 
 export function KpiRibbon() {
   const { state, update } = useApp();
+  // Latches the hovered card index so the tooltip can fade out in place.
+  const { mounted: tipMounted, closing: tipClosing, latched: tipIdx } = useOverlayExit(state.tipKpi, 120);
 
   return (
     <div className="kpi-ribbon">
@@ -62,7 +65,9 @@ export function KpiRibbon() {
                       to the glyph ink (cap height → baseline), so flex centers it as pure
                       geometry; font metrics can't drift it. */}
                   <span className="kpi-card__tip-glyph" aria-hidden="true">?</span>
-                  {state.tipKpi === i && <div className="kpi-card__tip">{k.tip}</div>}
+                  {tipMounted && tipIdx === i && (
+                    <div className={`kpi-card__tip${tipClosing ? ' kpi-card__tip--closing' : ''}`}>{k.tip}</div>
+                  )}
                 </span>
               )}
             </span>

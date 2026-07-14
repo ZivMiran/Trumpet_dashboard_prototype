@@ -4,6 +4,7 @@ import { accountsPool } from '../../data/accounts';
 import { fmtLive } from '../../lib/format';
 import { asset } from '../../lib/assets';
 import { CheckIcon, LogoutIcon, PlusIcon, ChevronDownIcon } from '../icons';
+import { useOverlayExit } from '../../lib/useOverlayExit';
 import './Sidebar.css';
 
 const workspaceNav: { key: Page; label: string; icon: React.ReactNode }[] = [
@@ -63,6 +64,7 @@ const CollapseIcon = ({ collapsed }: { collapsed: boolean }) => (
 export function Sidebar() {
   const { state, update } = useApp();
   const { page, activeAccts, liveCounts, acctOpen, sidebarCollapsed } = state;
+  const { mounted: acctMounted, closing: acctClosing } = useOverlayExit(acctOpen || null);
 
   const acctId = activeAccts.includes(state.acctId) ? state.acctId : activeAccts[0];
   const curAcct = accountsPool.find((a) => a.id === acctId) || accountsPool[0];
@@ -145,10 +147,10 @@ export function Sidebar() {
       </nav>
 
       <div className="sidebar__acct-wrap">
-        {acctOpen && (
+        {acctMounted && (
           <>
-            <div className="acct-scrim" onClick={closeAcct} />
-            <div className="acct-popover">
+            <div className={`acct-scrim${acctClosing ? ' acct-scrim--closing' : ''}`} onClick={closeAcct} />
+            <div className={`acct-popover${acctClosing ? ' acct-popover--closing' : ''}`}>
               <div className="acct-popover__header">
                 <span className="acct-popover__label">Accounts</span>
               </div>

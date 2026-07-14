@@ -40,12 +40,12 @@
 
 /* Exit — plays while useOverlayExit holds the modal mounted. */
 .compare__scrim--closing {
-  animation: scrim-out var(--dur-base) var(--ease-out) forwards;
+  animation: scrim-out var(--dur-base) var(--ease-in) forwards;
   pointer-events: none;
 }
 
 .compare__modal--closing {
-  animation: modal-out var(--dur-base) var(--ease-out) forwards;
+  animation: modal-out var(--dur-base) var(--ease-in) forwards;
   pointer-events: none;
 }
 
@@ -259,6 +259,12 @@
   animation: pop-in var(--dur-base) var(--ease-out);
 }
 
+/* Exit — plays while useOverlayExit holds the menu mounted. */
+.compare__metric-menu--closing {
+  animation: pop-out var(--dur-fast) var(--ease-in) forwards;
+  pointer-events: none;
+}
+
 .compare__metric-row {
   display: flex;
   align-items: center;
@@ -344,6 +350,10 @@
   z-index: 52;
 }
 
+.compare__picker-scrim--closing {
+  pointer-events: none;
+}
+
 .compare__picker {
   position: absolute;
   top: calc(100% + 6px);
@@ -355,6 +365,12 @@
   box-shadow: var(--shadow-lg);
   padding: 7px;
   animation: pop-in var(--dur-base) var(--ease-out);
+}
+
+/* Exit — plays while useOverlayExit holds the picker mounted. */
+.compare__picker--closing {
+  animation: pop-out var(--dur-fast) var(--ease-in) forwards;
+  pointer-events: none;
 }
 
 .compare__picker--left {

@@ -160,6 +160,16 @@
   animation: pop-in var(--dur-base) var(--ease-out);
 }
 
+/* Exit — plays while useOverlayExit holds the popover mounted. */
+.acct-scrim--closing {
+  pointer-events: none;
+}
+
+.acct-popover--closing {
+  animation: pop-out var(--dur-fast) var(--ease-in) forwards;
+  pointer-events: none;
+}
+
 .acct-popover__header {
   display: flex;
   align-items: center;

@@ -197,10 +197,14 @@ textarea:focus-visible {
   to { opacity: 1; }
 }
 
-/* Exit counterparts — a notch faster than the entrances. They run with
-   `forwards` fill while lib/useOverlayExit holds the overlay mounted,
-   so the hidden end state persists until the delayed unmount. scrim-out
-   doubles as the opacity-only exit for transform-centered panels. */
+/* Exit counterparts — faster than the entrances and always eased with
+   --ease-in (accelerate): an exit should build speed and end decisively,
+   never trail off. They run with `forwards` fill while lib/useOverlayExit
+   holds the overlay mounted, so the hidden end state persists until the
+   delayed unmount. scrim-out doubles as the opacity-only exit for
+   transform-centered panels. pop-out is scale-only: each popover shrinks
+   toward its own transform-origin, so it always retreats into its anchor
+   regardless of which side it opened from. */
 @keyframes scrim-out {
   to { opacity: 0; }
 }
@@ -214,7 +218,7 @@ textarea:focus-visible {
 }
 
 @keyframes pop-out {
-  to { transform: translateY(-4px) scale(0.97); opacity: 0; }
+  to { transform: scale(0.96); opacity: 0; }
 }
 
 /* The page root fades whenever a new screen mounts. */

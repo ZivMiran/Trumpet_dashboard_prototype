@@ -25,12 +25,12 @@
 
 /* Exit — plays while useOverlayExit holds the modal mounted. */
 .city-modal__scrim--closing {
-  animation: scrim-out var(--dur-base) var(--ease-out) forwards;
+  animation: scrim-out var(--dur-base) var(--ease-in) forwards;
   pointer-events: none;
 }
 
 .city-modal--closing {
-  animation: modal-out var(--dur-base) var(--ease-out) forwards;
+  animation: modal-out var(--dur-base) var(--ease-in) forwards;
 }
 
 .city-modal__head {

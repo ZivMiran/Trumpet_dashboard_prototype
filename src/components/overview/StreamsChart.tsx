@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { metricMeta, metricSeries, tfShape, tfNames, tfVs, evtData } from '../../data/overview';
 import { smoothPath, niceCeil, type Point } from '../../lib/chart';
 import { fmtAxis } from '../../lib/format';
+import { useOverlayExit } from '../../lib/useOverlayExit';
 import type { Metric, Timeframe } from '../../types';
 import './StreamsChart.css';
 
@@ -26,6 +27,8 @@ export function StreamsChart() {
   const { state, update } = useApp();
   const [hover, setHover] = useState<HoverState | null>(null);
   const [tfHover, setTfHover] = useState<Timeframe | null>(null);
+  // Latches the hovered tab so its tooltip can fade out in place.
+  const { mounted: tfTipMounted, closing: tfTipClosing, latched: tfTipKey } = useOverlayExit(tfHover, 120);
   const [anim, setAnim] = useState(0);
 
   const metric = state.metric;
@@ -148,7 +151,11 @@ export function StreamsChart() {
               >
                 {k}
               </button>
-              {tfHover === k && <div className="streams-card__seg-tooltip">{tfNames[k]}</div>}
+              {tfTipMounted && tfTipKey === k && (
+                <div className={`streams-card__seg-tooltip${tfTipClosing ? ' streams-card__seg-tooltip--closing' : ''}`}>
+                  {tfNames[k]}
+                </div>
+              )}
             </div>
           ))}
         </div>

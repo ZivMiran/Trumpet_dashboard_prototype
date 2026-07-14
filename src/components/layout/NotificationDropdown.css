@@ -28,7 +28,7 @@
 }
 
 .notif-dropdown--closing {
-  animation: pop-out var(--dur-fast) var(--ease-out) forwards;
+  animation: pop-out var(--dur-fast) var(--ease-in) forwards;
   pointer-events: none;
 }
 

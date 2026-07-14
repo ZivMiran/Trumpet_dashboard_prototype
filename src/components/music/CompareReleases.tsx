@@ -32,12 +32,14 @@ function TrackPickerMenu({
   currentIdx,
   excludeIdx,
   align,
+  closing,
   onPick,
   onClose,
 }: {
   currentIdx: number;
   excludeIdx: number;
   align: 'left' | 'right';
+  closing?: boolean;
   onPick: (i: number) => void;
   onClose: () => void;
 }) {
@@ -50,8 +52,8 @@ function TrackPickerMenu({
 
   return (
     <>
-      <div className="compare__picker-scrim" onClick={onClose} />
-      <div className={`compare__picker compare__picker--${align}`}>
+      <div className={`compare__picker-scrim${closing ? ' compare__picker-scrim--closing' : ''}`} onClick={onClose} />
+      <div className={`compare__picker compare__picker--${align}${closing ? ' compare__picker--closing' : ''}`}>
         <div className="compare__picker-search">
           <SearchIcon size={14} />
           <input
@@ -94,6 +96,9 @@ export function CompareReleases() {
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
   const [picker, setPicker] = useState<null | 'A' | 'B'>(null);
   const [metricOpen, setMetricOpen] = useState(false);
+  // Internal popovers get the same held-mount exit treatment as the modal.
+  const pickerExit = useOverlayExit(picker, 120);
+  const metricExit = useOverlayExit(metricOpen || null, 120);
   // Latched so the modal keeps its content while animating out.
   const { mounted, closing, latched: ids } = useOverlayExit(
     state.compare && state.compare.length > 0 ? state.compare : null,
@@ -187,8 +192,8 @@ export function CompareReleases() {
                 <span className="compare__sel-name">{A.title}</span>
                 <ChevronDownIcon size={14} />
               </button>
-              {picker === 'A' && (
-                <TrackPickerMenu currentIdx={aIdx} excludeIdx={bIdx} align="left" onPick={(i) => setSlot('A', i)} onClose={() => setPicker(null)} />
+              {pickerExit.mounted && pickerExit.latched === 'A' && (
+                <TrackPickerMenu currentIdx={aIdx} excludeIdx={bIdx} align="left" closing={pickerExit.closing} onPick={(i) => setSlot('A', i)} onClose={() => setPicker(null)} />
               )}
             </div>
             <span className="compare__vs">vs</span>
@@ -205,8 +210,8 @@ export function CompareReleases() {
                   Add a release
                 </button>
               )}
-              {picker === 'B' && (
-                <TrackPickerMenu currentIdx={bIdx} excludeIdx={aIdx} align="left" onPick={(i) => setSlot('B', i)} onClose={() => setPicker(null)} />
+              {pickerExit.mounted && pickerExit.latched === 'B' && (
+                <TrackPickerMenu currentIdx={bIdx} excludeIdx={aIdx} align="left" closing={pickerExit.closing} onPick={(i) => setSlot('B', i)} onClose={() => setPicker(null)} />
               )}
             </div>
           </div>
@@ -217,10 +222,13 @@ export function CompareReleases() {
                 {metricDef.label}
                 <ChevronDownIcon size={14} />
               </button>
-              {metricOpen && (
+              {metricExit.mounted && (
                 <>
-                  <div className="compare__picker-scrim" onClick={() => setMetricOpen(false)} />
-                  <div className="compare__metric-menu">
+                  <div
+                    className={`compare__picker-scrim${metricExit.closing ? ' compare__picker-scrim--closing' : ''}`}
+                    onClick={() => setMetricOpen(false)}
+                  />
+                  <div className={`compare__metric-menu${metricExit.closing ? ' compare__metric-menu--closing' : ''}`}>
                     {compareMetrics.map((m) => (
                       <button
                         type="button"

@@ -3,6 +3,7 @@ import { pageMeta } from '../../data/overview';
 import { catalog } from '../../data/catalog';
 import { notifications } from '../../data/notifications';
 import { SearchIcon, BellIcon, NoteIcon, DownloadIcon } from '../icons';
+import { useOverlayExit } from '../../lib/useOverlayExit';
 import './Header.css';
 
 export function Header() {
@@ -13,15 +14,20 @@ export function Header() {
   const unreadCount = notifications.filter((n) => n.unread && !readAll).length;
   const hasUnread = unreadCount > 0;
 
-  const q = query.trim().toLowerCase();
+  // The results panel latches the last query so it can pop out after clearing.
+  const {
+    mounted: searchMounted,
+    closing: searchClosing,
+    latched: lastQuery,
+  } = useOverlayExit(query.trim() || null);
+  const q = (lastQuery ?? '').toLowerCase();
   const searchResults = q
     ? catalog
         .map((r, i) => ({ r, i }))
         .filter(({ r }) => (r.title + ' ' + r.album).toLowerCase().includes(q))
         .map(({ r, i }) => ({ ...r, i }))
     : [];
-  const hasQuery = q.length > 0;
-  const noResults = hasQuery && searchResults.length === 0;
+  const noResults = q.length > 0 && searchResults.length === 0;
 
   const goToResult = (i: number) =>
     catalog[i].coll
@@ -48,10 +54,10 @@ export function Header() {
             placeholder="Search releases, songs, albums…"
           />
         </div>
-        {hasQuery && (
+        {searchMounted && (
           <>
-            <div className="search-scrim" onClick={clearSearch} />
-            <div className="search-results">
+            <div className={`search-scrim${searchClosing ? ' search-scrim--closing' : ''}`} onClick={clearSearch} />
+            <div className={`search-results${searchClosing ? ' search-results--closing' : ''}`}>
               {searchResults.map((r) => (
                 <button key={r.title} type="button" className="search-result-row" onClick={() => goToResult(r.i)}>
                   <div className="search-result-row__icon"><NoteIcon /></div>
@@ -62,7 +68,7 @@ export function Header() {
                   <div className="search-result-row__streams">{r.streams}</div>
                 </button>
               ))}
-              {noResults && <div className="search-no-results">No matches for "{query}"</div>}
+              {noResults && <div className="search-no-results">No matches for "{lastQuery}"</div>}
             </div>
           </>
         )}
