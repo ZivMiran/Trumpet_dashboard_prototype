@@ -141,6 +141,18 @@
   color: var(--accent);
 }
 
+.search-result-row__icon--cover {
+  background: #16171a;
+  overflow: hidden;
+}
+
+.search-result-row__cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 .search-result-row__body {
   flex: 1;
   min-width: 0;

@@ -1,12 +1,14 @@
 import { useApp } from '../../context/AppContext';
 import { audKpiData } from '../../data/audience';
-import { useOverlayExit } from '../../lib/useOverlayExit';
+import { useEscClose, useOverlayExit } from '../../lib/useOverlayExit';
 import './AudienceKpiDrawer.css';
 
 export function AudienceKpiDrawer() {
   const { state, update } = useApp();
   // Latched so the drawer keeps its content while animating out.
   const { mounted, closing, latched } = useOverlayExit(state.audKpi);
+  // Esc closes the drawer — unless the notifications modal sits above it.
+  useEscClose(state.audKpi != null && !state.winOpen, () => update({ audKpi: null }));
   if (!mounted || latched == null) return null;
   const k = audKpiData[latched];
   const close = () => update({ audKpi: null });

@@ -3,8 +3,6 @@ import { ListenersMap } from './ListenersMap';
 import { AudienceSourcesBento } from './AudienceSourcesBento';
 import { GenderSplitBento } from './GenderSplitBento';
 import { AudienceKpiDrawer } from './AudienceKpiDrawer';
-import { TrackDetailModal } from './TrackDetailModal';
-import { CityDetailModal } from './CityDetailModal';
 import './Audience.css';
 
 export function Audience() {
@@ -23,8 +21,6 @@ export function Audience() {
       </div>
 
       <AudienceKpiDrawer />
-      <TrackDetailModal />
-      <CityDetailModal />
     </div>
   );
 }

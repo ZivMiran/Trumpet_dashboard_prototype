@@ -6,13 +6,12 @@ export function PulseInsightCarousel() {
   const { state, update, pauseInsight, resumeInsight } = useApp();
   const ins = insightDefs[state.insightIdx % insightDefs.length];
 
+  // Track/album insights open their drawer over the current page; a region
+  // insight is about the map, so that one still navigates to Audience.
   const go = () =>
-    update({
-      page: ins.goPage,
-      sel: ins.goSel ?? null,
-      albumSel: ins.goAlbum ?? null,
-      region: ins.goRegion ?? null,
-    });
+    ins.goRegion != null
+      ? update({ page: ins.goPage, region: ins.goRegion })
+      : update({ sel: ins.goSel ?? null, albumSel: ins.goAlbum ?? null, selTrack: null });
 
   return (
     <div className="pulse-card" onMouseEnter={pauseInsight} onMouseLeave={resumeInsight}>

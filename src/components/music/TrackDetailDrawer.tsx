@@ -3,7 +3,7 @@ import { useApp, type DrillTrack } from '../../context/AppContext';
 import { catalog, tfDefs } from '../../data/catalog';
 import { tfVs } from '../../data/overview';
 import { makeWrand } from '../../lib/seed';
-import { useOverlayExit } from '../../lib/useOverlayExit';
+import { useEscClose, useOverlayExit } from '../../lib/useOverlayExit';
 import { fmtAxis, fmtStreams, growthColor, parseAdds, parseStreams } from '../../lib/format';
 import { asset, coverFor } from '../../lib/assets';
 import { CompareIcon } from '../icons';
@@ -45,6 +45,12 @@ export function TrackDetailDrawer() {
   useEffect(() => () => {
     if (playTimer.current) window.clearTimeout(playTimer.current);
   }, []);
+
+  // Esc closes the drawer — unless compare or the notifications modal sits above it.
+  useEscClose(
+    (state.sel != null || state.selTrack != null) && state.compare == null && !state.winOpen,
+    () => update({ sel: null, selTrack: null }),
+  );
 
   if (!mounted || latched == null) return null;
 

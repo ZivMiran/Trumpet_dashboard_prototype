@@ -18,12 +18,6 @@ export interface DrillTrack {
   _seed: number;
 }
 
-export interface TrkDetailSel {
-  label: string;
-  plays: string;
-  rank: number;
-}
-
 export interface CityDetailSel {
   name: string;
   count: string;
@@ -53,7 +47,6 @@ export interface AppState {
   audKpi: number | null;
   citiesAll: boolean;
   tracksAll: boolean;
-  trkDetail: TrkDetailSel | null;
   cityDetail: CityDetailSel | null;
   notifOpen: boolean;
   winOpen: boolean;
@@ -94,7 +87,6 @@ const initialState: AppState = {
   audKpi: null,
   citiesAll: false,
   tracksAll: false,
-  trkDetail: null,
   cityDetail: null,
   notifOpen: false,
   winOpen: false,
@@ -133,6 +125,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setState((s) => {
       const p = typeof patch === 'function' ? patch(s) : patch;
       if (!p) return s;
+      // Changing page dismisses any open detail overlay — a drawer belongs to
+      // the moment it was opened in, not to the next screen. (The patch is
+      // spread last, so a caller can still open one alongside a navigation.)
+      if (p.page != null && p.page !== s.page) {
+        return {
+          ...s,
+          sel: null,
+          selTrack: null,
+          albumSel: null,
+          cityDetail: null,
+          audKpi: null,
+          compare: null,
+          ...p,
+        };
+      }
       return { ...s, ...p };
     });
   };

@@ -144,23 +144,25 @@ export const citiesMap: Record<string, CityRow[]> = {
 };
 
 export const globalTracks: TrackRow[] = [
-  { label: 'Neon Tide', plays: '1.24M' }, { label: 'Paper Lanterns', plays: '910K' },
-  { label: 'Midnight Echo', plays: '684K' }, { label: 'Gold Static', plays: '503K' },
+  { label: 'Neon Tides', plays: '1.24M' }, { label: 'Paper Planes', plays: '910K' },
+  { label: 'Midnight Drive', plays: '684K' }, { label: 'Cold Static', plays: '503K' },
 ];
 
 export const tracksMap: Record<string, TrackRow[]> = {
-  usa: [{ label: 'Gold Static', plays: '212K' }, { label: 'Neon Tide', plays: '188K' }, { label: 'Slow Burn', plays: '141K' }, { label: 'Paper Lanterns', plays: '120K' }],
-  mexico: [{ label: 'Neon Tide', plays: '48K' }, { label: 'Paper Lanterns', plays: '39K' }, { label: 'Slow Burn', plays: '27K' }, { label: 'Gold Static', plays: '19K' }],
-  brazil: [{ label: 'Paper Lanterns', plays: '74K' }, { label: 'Neon Tide', plays: '66K' }, { label: 'Slow Burn', plays: '52K' }, { label: 'Gold Static', plays: '38K' }],
-  uk: [{ label: 'Midnight Echo', plays: '44K' }, { label: 'Neon Tide', plays: '39K' }, { label: 'Gold Static', plays: '28K' }, { label: 'Paper Lanterns', plays: '21K' }],
-  germany: [{ label: 'Midnight Echo', plays: '96K' }, { label: 'Neon Tide', plays: '81K' }, { label: 'Paper Lanterns', plays: '63K' }, { label: 'Gold Static', plays: '49K' }],
-  nigeria: [{ label: 'Neon Tide', plays: '31K' }, { label: 'Slow Burn', plays: '24K' }, { label: 'Paper Lanterns', plays: '18K' }, { label: 'Gold Static', plays: '12K' }],
-  india: [{ label: 'Neon Tide', plays: '47K' }, { label: 'Paper Lanterns', plays: '38K' }, { label: 'Midnight Echo', plays: '29K' }, { label: 'Gold Static', plays: '20K' }],
-  korea: [{ label: 'Neon Tide', plays: '88K' }, { label: 'Midnight Echo', plays: '72K' }, { label: 'Gold Static', plays: '54K' }, { label: 'Paper Lanterns', plays: '41K' }],
-  japan: [{ label: 'Midnight Echo', plays: '63K' }, { label: 'Neon Tide', plays: '58K' }, { label: 'Paper Lanterns', plays: '42K' }, { label: 'Gold Static', plays: '31K' }],
-  australia: [{ label: 'Gold Static', plays: '34K' }, { label: 'Neon Tide', plays: '29K' }, { label: 'Slow Burn', plays: '21K' }, { label: 'Paper Lanterns', plays: '16K' }],
+  usa: [{ label: 'Cold Static', plays: '212K' }, { label: 'Neon Tides', plays: '188K' }, { label: 'Slow Burn', plays: '141K' }, { label: 'Paper Planes', plays: '120K' }],
+  mexico: [{ label: 'Neon Tides', plays: '48K' }, { label: 'Paper Planes', plays: '39K' }, { label: 'Slow Burn', plays: '27K' }, { label: 'Cold Static', plays: '19K' }],
+  brazil: [{ label: 'Paper Planes', plays: '74K' }, { label: 'Neon Tides', plays: '66K' }, { label: 'Slow Burn', plays: '52K' }, { label: 'Cold Static', plays: '38K' }],
+  uk: [{ label: 'Midnight Drive', plays: '44K' }, { label: 'Neon Tides', plays: '39K' }, { label: 'Cold Static', plays: '28K' }, { label: 'Paper Planes', plays: '21K' }],
+  germany: [{ label: 'Midnight Drive', plays: '96K' }, { label: 'Neon Tides', plays: '81K' }, { label: 'Paper Planes', plays: '63K' }, { label: 'Cold Static', plays: '49K' }],
+  nigeria: [{ label: 'Neon Tides', plays: '31K' }, { label: 'Slow Burn', plays: '24K' }, { label: 'Paper Planes', plays: '18K' }, { label: 'Cold Static', plays: '12K' }],
+  india: [{ label: 'Neon Tides', plays: '47K' }, { label: 'Paper Planes', plays: '38K' }, { label: 'Midnight Drive', plays: '29K' }, { label: 'Cold Static', plays: '20K' }],
+  korea: [{ label: 'Neon Tides', plays: '88K' }, { label: 'Midnight Drive', plays: '72K' }, { label: 'Cold Static', plays: '54K' }, { label: 'Paper Planes', plays: '41K' }],
+  japan: [{ label: 'Midnight Drive', plays: '63K' }, { label: 'Neon Tides', plays: '58K' }, { label: 'Paper Planes', plays: '42K' }, { label: 'Cold Static', plays: '31K' }],
+  australia: [{ label: 'Cold Static', plays: '34K' }, { label: 'Neon Tides', plays: '29K' }, { label: 'Slow Burn', plays: '21K' }, { label: 'Paper Planes', plays: '16K' }],
 };
 
-export const songPool = ['Neon Tide', 'Paper Lanterns', 'Midnight Echo', 'Gold Static', 'Slow Burn', 'After Dark', 'Glass Hearts', 'Velvet Hours', 'Ember Lines', 'Coastline', 'Quiet Engine', 'Afterglow'];
+// Filler pool for the expanded track list — every name is a real catalog track
+// (single or collection member) so each row can open the shared track drawer.
+export const songPool = ['Neon Tides', 'Paper Planes', 'Midnight Drive', 'Cold Static', 'Slow Burn', 'After Dark', 'Glass Hearts', 'Velvet Hours', 'Embers', 'Drift', 'Parallel', 'Afterglow'];
 
 export const platformNames = ['Spotify', 'Apple Music', 'YouTube Music', 'Amazon / Other'];

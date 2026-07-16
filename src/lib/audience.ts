@@ -90,6 +90,3 @@ export const allTrackRowsFor = (rid: string | null, tf: Timeframe = '1M'): Track
 };
 
 export const scopeNameFor = (rid: string | null): string => nameOf(rid) || 'Worldwide';
-
-export const detailScopeLabelFor = (rid: string | null): string =>
-  rid ? 'within ' + nameOf(rid) : 'Across all markets';

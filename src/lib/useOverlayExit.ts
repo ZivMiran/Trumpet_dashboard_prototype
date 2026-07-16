@@ -8,6 +8,21 @@ import { useEffect, useRef, useState } from 'react';
 
    `ms` outlasts the 0.15s exit animations slightly; `forwards` fill on
    the keyframes holds the hidden end state until unmount. */
+/* Close an overlay on Escape while it's open. Pass `active: false` when
+   another overlay is stacked above it, so Esc only peels the topmost layer. */
+export function useEscClose(active: boolean, onClose: () => void) {
+  const closeRef = useRef(onClose);
+  closeRef.current = onClose;
+  useEffect(() => {
+    if (!active) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeRef.current();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [active]);
+}
+
 export function useOverlayExit<T>(value: T | null | undefined, ms = 180) {
   const open = value != null;
   const lastRef = useRef(value);

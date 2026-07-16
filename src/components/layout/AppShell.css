@@ -14,3 +14,14 @@
   flex-direction: column;
   overflow: hidden;
 }
+
+/* Positioning root for the detail drawers — the page area under the header,
+   so a drawer overlays the current screen without covering the chrome. */
+.app-shell__page {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}

@@ -3,6 +3,7 @@ import { pageMeta } from '../../data/overview';
 import { catalog } from '../../data/catalog';
 import { notifications } from '../../data/notifications';
 import { SearchIcon, BellIcon, NoteIcon, DownloadIcon } from '../icons';
+import { asset } from '../../lib/assets';
 import { useOverlayExit } from '../../lib/useOverlayExit';
 import './Header.css';
 
@@ -29,10 +30,11 @@ export function Header() {
     : [];
   const noResults = q.length > 0 && searchResults.length === 0;
 
+  // Results open the detail drawer over whatever page is showing — no page jump.
   const goToResult = (i: number) =>
     catalog[i].coll
-      ? update({ page: 'music', albumSel: i, sel: null, selTrack: null, query: '' })
-      : update({ page: 'music', sel: i, selTrack: null, albumSel: null, query: '' });
+      ? update({ albumSel: i, sel: null, selTrack: null, query: '' })
+      : update({ sel: i, selTrack: null, albumSel: null, query: '' });
   const clearSearch = () => update({ query: '' });
   const toggleNotif = () => update((s) => ({ notifOpen: !s.notifOpen }));
 
@@ -60,7 +62,9 @@ export function Header() {
             <div className={`search-results${searchClosing ? ' search-results--closing' : ''}`}>
               {searchResults.map((r) => (
                 <button key={r.title} type="button" className="search-result-row" onClick={() => goToResult(r.i)}>
-                  <div className="search-result-row__icon"><NoteIcon /></div>
+                  <div className={`search-result-row__icon${r.img ? ' search-result-row__icon--cover' : ''}`}>
+                    {r.img ? <img className="search-result-row__cover" src={asset(r.img)} alt="" loading="lazy" /> : <NoteIcon />}
+                  </div>
                   <div className="search-result-row__body">
                     <div className="search-result-row__title">{r.title}</div>
                     <div className="search-result-row__album">{r.album}</div>

@@ -1,5 +1,6 @@
 import { useApp } from '../../context/AppContext';
 import { allCitiesFor, allTrackRowsFor, nameOf } from '../../lib/audience';
+import { trackDrawerSel } from '../../lib/music';
 import './AudienceSourcesBento.css';
 
 const chevron = (
@@ -70,7 +71,7 @@ export function AudienceSourcesBento() {
                 key={t.label}
                 className="audience-sources__row"
                 style={{ animationDelay: `${i * 35}ms` }}
-                onClick={() => update({ trkDetail: { label: t.label, plays: t.plays, rank: t.rank } })}
+                onClick={() => update(trackDrawerSel(t.label, t.plays))}
               >
                 <div className="audience-sources__rank">{t.rank}</div>
                 <div className="audience-sources__name">{t.label}</div>

@@ -16,7 +16,10 @@ of the prototype.
 
 The persistent frame around every page: fixed sidebar on the left, scrollable main column
 (header + page content) on the right. Overlays (notification dropdown, notifications modal)
-render above everything.
+render above everything. The detail overlays — track detail drawer, album breakdown drawer,
+city detail drawer, and the compare-releases modal — are mounted at shell level over the page
+area (below the header), so they open on top of whichever page is showing rather than
+navigating; switching pages dismisses them, and Esc closes the topmost drawer.
 
 ### Sidebar
 - **Looks:** Fixed-width (232px) vertical rail on the app canvas. Top: brass-gold Trumpet
@@ -62,7 +65,7 @@ render above everything.
 - **States:** Shown only while the query is non-empty. *No-results* shows "No matches for
   '…'". Rows hover-highlight.
 - **Content:** One row per matched catalog track (note icon, title, album, streams). Clicking
-  jumps to that track on the Music page.
+  opens that release's detail drawer (track or album breakdown) over the current page.
 
 ### Notification dropdown
 - **Looks:** Floating panel anchored under the bell, over a scrim. Header + scrollable list +
@@ -91,8 +94,9 @@ chart + revenue donut).
 - **Looks:** Wide banner card. Left: lightning-bolt icon. Middle: tag, a headline with one
   gold-highlighted phrase, and a sub line. Right: "View detail →" and pager dots.
 - **States:** Auto-advances on a timer; *hover pauses* (and resumes on leave). Active pager
-  dot is elongated and gold; others are short and grey. Body and "View detail" are clickable
-  (navigate to the related page/selection).
+  dot is elongated and gold; others are short and grey. Body and "View detail" are clickable —
+  track/album insights open their detail drawer over the Overview; the region insight
+  navigates to the Audience page with that region selected.
 - **Content:** Rotating insights — tag, pre/highlight/post headline, sub text, destination.
 
 ### KPI ribbon (Overview)
@@ -150,8 +154,9 @@ chart + revenue donut).
 
 ## Music Page
 
-Main column with the movers widget on top and the catalog table below; a track-detail drawer
-slides in from the right when a track is selected.
+Main column with the movers widget on top and the catalog table below. Selecting a track
+slides in the shell-level track detail drawer from the right (it also opens from header
+search, Overview insights, and the Audience lists — always over the current page).
 
 ### Movers widget (Top performing tracks)
 - **Looks:** Card with a title, sub line, and a timeframe segmented control; below, a grid of
@@ -191,7 +196,9 @@ slides in from the right when a track is selected.
   phrase]" + growth vs prior period); a 3-stat row (Save Rate, Saves, Skip Rate); an
   "Engagement waveform" with colored skip/save bands, badges, and a time axis (0:00–3:45);
   a legend; a "Top markets" bar list. Footer: "Compare" (primary width) + "Export".
-- **States:** Open when a track (row or sub-track) is selected; closes via scrim or Close.
+- **States:** Open when a track (row or sub-track) is selected — from the catalog, movers,
+  header search, an Overview insight, or an Audience track row; closes via scrim, Close, Esc,
+  or navigating to another page.
   Timeframe tab *active* (gold); switching rescales streams and saves, and growth reads
   "lifetime" (grey) on All. Growth value colored by sign. Waveform is deterministically
   generated per track (skip clusters red, save clusters green, streams grey); bars stagger
@@ -209,8 +216,9 @@ slides in from the right when a track is selected.
 ## Audience Page
 
 A KPI ribbon across the top, then a two-column canvas: the listeners map (left) and a side
-panel (right) holding the sources bento and gender split. Three overlays — KPI drawer, track
-detail modal, city detail modal.
+panel (right) holding the sources bento and gender split. One page overlay — the KPI drawer.
+Track rows open the shared shell-level track detail drawer; city rows open the shell-level
+city detail drawer.
 
 ### KPI ribbon (Audience)
 - **Looks:** Row of 4 stat cards.
@@ -233,8 +241,9 @@ detail modal, city detail modal.
 - **Looks:** Panel with a header (current scope name + a Reset button) and two sub-sections:
   Top Tracks and Top Cities. Each is a ranked list with a show-more toggle.
 - **States:** Reset button visible only when a region is selected. Each list toggles between
-  truncated and full via show-more. Rows hover-highlight and are clickable to open detail
-  modals. Data reacts to the selected map region.
+  truncated and full via show-more. Rows hover-highlight and are clickable — a track row
+  opens the shared track detail drawer (every list name is a real catalog track), a city row
+  opens the city detail drawer. Data reacts to the selected map region.
 - **Content:** Scope name; Top Tracks (rank, name, plays, chevron); Top Cities (rank, name,
   count, trend arrow ↑/▼, chevron).
 
@@ -248,24 +257,21 @@ detail modal, city detail modal.
 - **Looks:** Right-side drawer (~560px) over a scrim. Header label, large value, delta/sub,
   note paragraph; a 3-stat strip; a "By platform" section of progress-bar rows; footer with
   decorative "Open full report" + "Export".
-- **States:** Open when a ribbon KPI is selected; closes via scrim. Footer buttons decorative.
+- **States:** Open when a ribbon KPI is selected; closes via scrim or Esc. Footer buttons
+  decorative.
 - **Content:** Metric label/value/delta/note; New / Returning / Plays-per-listener; platform
   bars (Spotify, Apple Music, YouTube Music, Amazon/Other).
 
-### Track detail modal (Audience)
-- **Looks:** Centered modal (~430px) over a scrim. Header (#rank, title, plays, scope label);
-  a 3-stat grid; a platform-split bar + legend.
-- **States:** Open when a track row is clicked; closes via scrim. Stats/splits are
-  deterministically seeded from the track name.
-- **Content:** Rank, title, plays, scope; Saves / Avg. Completion % / Playlist Adds; platform
-  split bar + legend.
-
-### City detail modal (Audience)
-- **Looks:** Centered modal (~430px) over a scrim. Header (#rank, city, listeners, trend %);
-  platform-split bar + legend; a "Top Tracks Here" mini-list.
-- **States:** Open when a city row is clicked; closes via scrim. Values seeded from the city
-  name.
-- **Content:** Rank, city, listeners, trend; platform split; top 3 region tracks (scaled).
+### City detail drawer
+- **Looks:** Right-side drawer (~560px) over a scrim, matching the drawer language. Header
+  label ("City Detail") + Close. Body: kicker ("City · #rank"), city name, scope line; a large
+  listener count with trend; a 3-stat strip; a "By platform" split bar + legend; a "Top tracks
+  here" ranked list with gold progress bars. Footer: decorative "Open city report" + "Export".
+- **States:** Open when a city row is clicked; closes via scrim, Close, Esc, or navigating.
+  Stats and splits are deterministically seeded from the city name. Track rows
+  hover-highlight; clicking one swaps this drawer for the shared track detail drawer.
+- **Content:** Rank, city, scope; listeners + trend; New listeners / Plays-per-listener /
+  Follower share; platform split; top 5 region tracks (scaled plays, relative bars).
 
 ---
 

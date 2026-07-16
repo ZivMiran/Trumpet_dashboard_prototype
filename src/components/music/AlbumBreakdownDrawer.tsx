@@ -3,7 +3,7 @@ import { catalog, collections } from '../../data/catalog';
 import { parsePlays, growthColor } from '../../lib/format';
 import { typeOf } from '../../lib/music';
 import { asset } from '../../lib/assets';
-import { useOverlayExit } from '../../lib/useOverlayExit';
+import { useEscClose, useOverlayExit } from '../../lib/useOverlayExit';
 import { NoteIcon, CloseIcon, DownloadIcon, CompareIcon } from '../icons';
 import './AlbumBreakdownDrawer.css';
 
@@ -11,6 +11,10 @@ export function AlbumBreakdownDrawer() {
   const { state, update } = useApp();
   // Latched so the drawer keeps its content while animating out.
   const { mounted, closing, latched: albumSel } = useOverlayExit(state.albumSel);
+  // Esc closes the drawer — unless compare or the notifications modal sits above it.
+  useEscClose(state.albumSel != null && state.compare == null && !state.winOpen, () =>
+    update({ albumSel: null }),
+  );
   if (!mounted || albumSel == null) return null;
 
   const r = catalog[albumSel];
