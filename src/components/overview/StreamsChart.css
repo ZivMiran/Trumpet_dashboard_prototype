@@ -247,21 +247,29 @@
   overflow: visible;
 }
 
-/* Line and fill reveal together: the line draws in while the fill fades up
-   underneath it on the same clock (the <g> is keyed to restart both). */
+/* Line and fill reveal together as one unit: a single clip-path wipe on the
+   shared group sweeps both in left→right, so the fill only ever appears where
+   the line has already drawn. (Previously the line wiped while the fill faded
+   in across the full width on its own clock — the fill raced ahead and the
+   right of the chart showed a filled shape with no line capping it until the
+   line caught up.) A clip wipe carries no length math, unlike a stroke-dash
+   reveal, which under non-scaling-stroke is measured in user space but painted
+   in screen space — so as the SVG scaled up it fell short of the end and
+   snapped as it settled. The wipe instead finishes flush at the end dot at
+   every window size. The negative top/bottom insets keep the line's stroke and
+   glow from being clipped as the wipe passes. */
+.streams-card__reveal {
+  clip-path: inset(-30% 0 -30% 0);
+  animation: chart-reveal 0.85s var(--ease-out);
+}
+
 .streams-card__line-path {
   fill: none;
   stroke: var(--chart-color);
   stroke-width: 2.5;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-dasharray: 1;
-  animation: chart-draw 0.85s var(--ease-out) forwards;
   filter: drop-shadow(0 0 6px color-mix(in srgb, var(--chart-color) 30%, transparent));
-}
-
-.streams-card__area-path {
-  animation: area-in 0.85s var(--ease-out) both;
 }
 
 /* The eased left transition doubles as the magnetic tug toward peak events. */
@@ -456,15 +464,9 @@
   margin-top: 2px;
 }
 
-@keyframes chart-draw {
-  from { stroke-dashoffset: 1; }
-  to { stroke-dashoffset: 0; }
-}
-
-@keyframes area-in {
-  from { opacity: 0; }
-  60% { opacity: 0.5; }
-  to { opacity: 1; }
+@keyframes chart-reveal {
+  from { clip-path: inset(-30% 100% -30% 0); opacity: 0.5; }
+  to { clip-path: inset(-30% 0 -30% 0); opacity: 1; }
 }
 
 @keyframes value-in {
@@ -490,11 +492,13 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .streams-card__line-path,
-  .streams-card__area-path,
+  .streams-card__reveal,
   .streams-card__value-row,
   .streams-card__end-dot,
   .streams-card__end-dot::before {
     animation: none;
+  }
+  .streams-card__reveal {
+    clip-path: none;
   }
 }

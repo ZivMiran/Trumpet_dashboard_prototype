@@ -200,9 +200,9 @@ export function StreamsChart() {
                   <stop offset="100%" stopColor={metricColor} stopOpacity="0.015" />
                 </linearGradient>
               </defs>
-              <g key={anim}>
+              <g key={anim} className="streams-card__reveal">
                 <path d={metricAreaPath} fill="url(#streamFill)" stroke="none" className="streams-card__area-path" />
-                <path d={metricLinePath} pathLength={1} vectorEffect="non-scaling-stroke" className="streams-card__line-path" />
+                <path d={metricLinePath} vectorEffect="non-scaling-stroke" className="streams-card__line-path" />
               </g>
             </svg>
             {hover && <div className="streams-card__crosshair" style={{ left: `${(anchorFrac * 100).toFixed(3)}%` }} />}
