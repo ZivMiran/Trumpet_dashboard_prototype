@@ -389,38 +389,76 @@
 }
 
 /* ── Peak-event marker (sits on the data point) ──────────── */
+/* Zero-size anchor at the marker's point on the curve. It carries the pop-in
+   (scale + fade grow exactly around the anchor) so the button below keeps its
+   hover transform free of any running animation. The delay is computed inline
+   per marker (REVEAL_MS × inverse-eased fx); `backwards` keeps the marker
+   hidden — and un-hoverable — until the reveal wipe reaches it. */
+.streams-card__evt-wrap {
+  position: absolute;
+  width: 0;
+  height: 0;
+  z-index: 7;
+  animation: evt-pop 0.3s var(--ease-out) backwards;
+}
+
+/* The button is just a positioned shell — the visible marker (ring, disc,
+   bolt) is the single svg inside it, so all three shapes rasterize together
+   and stay aligned at any fractional position or display scaling. */
 .streams-card__evt-mark {
   position: absolute;
+  left: 0;
+  top: 0;
   width: 20px;
   height: 20px;
   padding: 0;
   transform: translate(-50%, -50%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: block;
+  border: none;
+  background: none;
   border-radius: 50%;
-  border: 2px solid var(--surface-card);
-  background: var(--accent);
-  color: var(--on-main);
   cursor: pointer;
-  pointer-events: auto;
+  /* No explicit pointer-events — inherits the wrapper's, so the marker stays
+     inert while evt-pop's backwards fill holds it hidden pre-delay. */
   z-index: 7;
   box-shadow: 0 0 0 3px rgba(227, 181, 58, 0.18), 0 2px 6px rgba(0, 0, 0, 0.45);
   transition: transform var(--dur-base) var(--ease-out),
-    box-shadow var(--dur-base) var(--ease-out),
-    background var(--dur-base) var(--ease-out);
-  animation: fade-soft var(--dur-slow) var(--ease-out);
+    box-shadow var(--dur-base) var(--ease-out);
+}
+
+.streams-card__evt-mark svg {
+  display: block;
+}
+
+.streams-card__evt-ring {
+  fill: var(--surface-card);
+}
+
+.streams-card__evt-core {
+  fill: var(--accent);
+  transition: fill var(--dur-base) var(--ease-out);
+}
+
+.streams-card__evt-bolt {
+  fill: var(--on-main);
 }
 
 /* --hot mirrors :hover — set while the crosshair is magnetized onto the
-   event, so the marker lights up from anywhere on its x position. */
+   event, so the marker lights up from anywhere on its x position. The scale
+   grows the whole single-svg marker as one unit around its anchor, so the
+   bolt stays locked in the disc's center while it swells. */
 .streams-card__evt-mark:hover,
 .streams-card__evt-mark--hot,
 .streams-card__evt-mark:focus-visible {
-  background: var(--accent-hover);
-  box-shadow: 0 0 0 5px rgba(227, 181, 58, 0.3), 0 2px 8px rgba(0, 0, 0, 0.5);
   transform: translate(-50%, -50%) scale(1.14);
+  box-shadow: 0 0 0 5px rgba(227, 181, 58, 0.32), 0 2px 8px rgba(0, 0, 0, 0.5);
   outline: none;
+}
+
+.streams-card__evt-mark:hover .streams-card__evt-core,
+.streams-card__evt-mark--hot .streams-card__evt-core,
+.streams-card__evt-mark:focus-visible .streams-card__evt-core {
+  fill: var(--accent-hover);
 }
 
 /* ── Event detail folded into the single hover tooltip ───── */
@@ -469,6 +507,22 @@
   to { clip-path: inset(-30% 0 -30% 0); opacity: 1; }
 }
 
+/* Marker grows out of the line, halo fading up with it — no bounce. The
+   wrapper is 0×0, so the scale is exactly centered on the curve point, and
+   pointer-events in `from` keeps the pending marker inert while hidden. */
+@keyframes evt-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+    pointer-events: none;
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+  }
+}
+
 @keyframes value-in {
   from {
     opacity: 0;
@@ -495,7 +549,8 @@
   .streams-card__reveal,
   .streams-card__value-row,
   .streams-card__end-dot,
-  .streams-card__end-dot::before {
+  .streams-card__end-dot::before,
+  .streams-card__evt-wrap {
     animation: none;
   }
   .streams-card__reveal {

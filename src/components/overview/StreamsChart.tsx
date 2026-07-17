@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { metricMeta, metricSeries, tfShape, tfNames, tfVs, evtData } from '../../data/overview';
-import { smoothPath, niceCeil, type Point } from '../../lib/chart';
+import { smoothPath, niceCeil, easeOutTimeFor, type Point } from '../../lib/chart';
 import { fmtAxis } from '../../lib/format';
 import { useOverlayExit } from '../../lib/useOverlayExit';
 import type { Metric, Timeframe } from '../../types';
@@ -13,6 +13,10 @@ const metricKeys = Object.keys(metricMeta) as Metric[];
 // How close (as a fraction of plot width) the cursor must be to a peak-event
 // marker before the crosshair magnetizes onto it.
 const EVT_MAGNET = 0.04;
+
+// Matches the chart-reveal wipe duration in StreamsChart.css — marker pop-in
+// delays are derived from it so each marker lands as the wipe reaches it.
+const REVEAL_MS = 850;
 
 // Snapped hover point, the magnetized event (if any), and the plot size
 // captured at move time (for px math).
@@ -65,7 +69,10 @@ export function StreamsChart() {
     const i0 = Math.floor(p);
     const i1 = Math.min(N - 1, i0 + 1);
     const nv = sv[i0] + (sv[i1] - sv[i0]) * (p - i0);
-    return { key: i, fx, fxPct: fx * 100, cyPct: (1 - nv) * 100, nv, t: e.t, d: e.d };
+    // Pop in just as the reveal wipe crosses this marker's x position — the
+    // line reaches the spot, then plants the marker.
+    const delayMs = Math.round(REVEAL_MS * easeOutTimeFor(fx)) + 50;
+    return { key: i, fx, fxPct: fx * 100, cyPct: (1 - nv) * 100, nv, delayMs, t: e.t, d: e.d };
   });
 
   const hi = hover ? Math.max(0, Math.min(N - 1, hover.idx)) : null;
@@ -219,18 +226,37 @@ export function StreamsChart() {
                 style={{ left: '100%', top: `${((1 - sv[N - 1]) * 100).toFixed(2)}%` }}
               />
             )}
+            {/* The zero-size wrapper carries the pop-in (scale + fade around the
+                anchor point) so the button's hover transform is never owned by
+                a running animation — hovering mid-pop still scales smoothly. */}
             {evtMarkers.map((e) => (
-              <button
-                key={e.key}
-                type="button"
-                className={`streams-card__evt-mark ${hover && hover.evt === e.key ? 'streams-card__evt-mark--hot' : ''}`}
-                style={{ left: `${e.fxPct.toFixed(2)}%`, top: `${e.cyPct.toFixed(2)}%` }}
-                aria-label={`Peak event: ${e.t}. ${e.d}`}
+              <span
+                key={`${anim}-${e.key}`}
+                className="streams-card__evt-wrap"
+                style={{ left: `${e.fxPct.toFixed(2)}%`, top: `${e.cyPct.toFixed(2)}%`, animationDelay: `${e.delayMs}ms` }}
               >
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                  <path d="M13 2 3 14h7l-1 8 11-13h-7l1-7z" />
-                </svg>
-              </button>
+                <button
+                  type="button"
+                  className={`streams-card__evt-mark ${hover && hover.evt === e.key ? 'streams-card__evt-mark--hot' : ''}`}
+                  aria-label={`Peak event: ${e.t}. ${e.d}`}
+                >
+                  {/* Ring, disc, and bolt are ONE svg so they rasterize in a
+                      single vector pass — markers sit at fractional pixels, and
+                      a CSS-painted circle + nested icon snap to the pixel grid
+                      independently, drifting differently per marker. The bolt is
+                      placed by its ink centroid (≈11.49, 11.46 in its 24-grid)
+                      so its visual mass lands dead-center in the disc. */}
+                  <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+                    <circle cx="10" cy="10" r="10" className="streams-card__evt-ring" />
+                    <circle cx="10" cy="10" r="8" className="streams-card__evt-core" />
+                    <path
+                      className="streams-card__evt-bolt"
+                      d="M13 2 3 14h7l-1 8 11-13h-7l1-7z"
+                      transform="translate(10 10) scale(0.4583) translate(-11.49 -11.46)"
+                    />
+                  </svg>
+                </button>
+              </span>
             ))}
             {tipStyle && (
               <div className="streams-card__tip" style={tipStyle}>

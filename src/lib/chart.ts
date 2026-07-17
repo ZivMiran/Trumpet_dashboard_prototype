@@ -22,6 +22,24 @@ export const smoothPath = (p: Point[]): string => {
   return d;
 };
 
+// Inverse of the app's --ease-out curve, cubic-bezier(0.22, 1, 0.36, 1):
+// the normalized time [0..1] at which the eased progress reaches `p`. Used to
+// sync discrete elements (peak-event markers) with a wipe that eases across
+// the chart — solve y(s) = p by bisection (y is monotonic), then read x(s).
+export const easeOutTimeFor = (p: number): number => {
+  if (p <= 0) return 0;
+  if (p >= 1) return 1;
+  const bez = (a: number, b: number, s: number) => 3 * (1 - s) * (1 - s) * s * a + 3 * (1 - s) * s * s * b + s * s * s;
+  let lo = 0;
+  let hi = 1;
+  for (let i = 0; i < 24; i++) {
+    const mid = (lo + hi) / 2;
+    if (bez(1, 1, mid) < p) lo = mid;
+    else hi = mid;
+  }
+  return bez(0.22, 0.36, (lo + hi) / 2);
+};
+
 export const niceCeil = (x: number): number => {
   if (x <= 0) return 0;
   const e = Math.pow(10, Math.floor(Math.log10(x)));
