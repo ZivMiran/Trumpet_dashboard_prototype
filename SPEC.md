@@ -255,10 +255,9 @@ city detail drawer.
 
 ### Audience KPI drawer
 - **Looks:** Right-side drawer (~560px) over a scrim. Header label, large value, delta/sub,
-  note paragraph; a 3-stat strip; a "By platform" section of progress-bar rows; footer with
-  decorative "Open full report" + "Export".
-- **States:** Open when a ribbon KPI is selected; closes via scrim or Esc. Footer buttons
-  decorative.
+  note paragraph; a 3-stat strip; a "By platform" section of progress-bar rows. No footer —
+  the platform rows end the drawer.
+- **States:** Open when a ribbon KPI is selected; closes via scrim or Esc.
 - **Content:** Metric label/value/delta/note; New / Returning / Plays-per-listener; platform
   bars (Spotify, Apple Music, YouTube Music, Amazon/Other).
 
@@ -266,7 +265,7 @@ city detail drawer.
 - **Looks:** Right-side drawer (~560px) over a scrim, matching the drawer language. Header
   label ("City Detail") + Close. Body: kicker ("City · #rank"), city name, scope line; a large
   listener count with trend; a 3-stat strip; a "By platform" split bar + legend; a "Top tracks
-  here" ranked list with gold progress bars. Footer: decorative "Open city report" + "Export".
+  here" ranked list with gold progress bars. No footer — the track list ends the drawer.
 - **States:** Open when a city row is clicked; closes via scrim, Close, Esc, or navigating.
   Stats and splits are deterministically seeded from the city name. Track rows
   hover-highlight; clicking one swaps this drawer for the shared track detail drawer.

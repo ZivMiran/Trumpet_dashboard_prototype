@@ -4,7 +4,6 @@ import { parsePlays, fmtK } from '../../lib/format';
 import { nameOf, trkArrFor } from '../../lib/audience';
 import { trackDrawerSel } from '../../lib/music';
 import { useEscClose, useOverlayExit } from '../../lib/useOverlayExit';
-import { DownloadIcon } from '../icons';
 import './CityDetailDrawer.css';
 
 export function CityDetailDrawer() {
@@ -113,14 +112,6 @@ export function CityDetailDrawer() {
               </button>
             ))}
           </div>
-        </div>
-
-        <div className="city-drawer__footer">
-          <button type="button" className="city-drawer__report-btn">Open city report</button>
-          <button type="button" className="city-drawer__export-btn">
-            <DownloadIcon size={14} />
-            Export
-          </button>
         </div>
       </aside>
     </>
