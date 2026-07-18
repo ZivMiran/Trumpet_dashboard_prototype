@@ -487,7 +487,10 @@
 
 .sidebar--collapsed .sidebar__brand {
   gap: 0;
-  padding: 2px 0 26px;
+  /* 30px (not the expanded 26px) drops the Workspace divider to y 85 — the
+     exact row of the header's bottom border, so the two hairlines read as one
+     continuous line across the rail and the main column. */
+  padding: 2px 0 30px;
 }
 
 .sidebar--collapsed .sidebar__wordmark {
