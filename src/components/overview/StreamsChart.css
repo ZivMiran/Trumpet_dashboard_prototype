@@ -179,7 +179,7 @@
   position: relative;
   flex: 1;
   min-height: 0;
-  cursor: crosshair;
+  cursor: default;
 }
 
 .streams-card__grid-line {
